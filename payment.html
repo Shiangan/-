@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>選擇付款方式</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f7f7f7; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .summary-box { border: 2px solid #007bff; padding: 20px; border-radius: 8px; margin-bottom: 30px; background: #e9f7ff; }
+        .summary-box h2 { color: #007bff; margin-top: 0; }
+        .summary-box p { font-size: 1.1em; line-height: 1.6; }
+        .payment-options { display: flex; flex-direction: column; gap: 20px; }
+        .payment-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fff; }
+        .payment-card h3 { margin-top: 0; color: #555; }
+        .linepay-btn {
+            display: block; width: 100%; padding: 15px; background-color: #00b900; color: white; border: none; border-radius: 8px; font-size: 1.2em; text-align: center; text-decoration: none; font-weight: bold;
+        }
+        .linepay-btn:hover { background-color: #009900; }
+        .bank-info strong { color: #e74c3c; font-size: 1.1em; display: block; margin-top: 10px; }
+        /* 後台提示樣式 */
+        .backend-tip { background-color: #ffcccc; padding: 10px; border-radius: 5px; color: #cc0000; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="pageTitle">花籃訂購 - 選擇付款方式</h1>
+        
+        <div class="summary-box">
+            <h2>訂單摘要</h2>
+            <p><strong>亡者:</strong> <span id="deceasedName"></span></p>
+            <p><strong>花籃樣式:</strong> <span id="flowerStyle"></span> (<span id="unitPrice"></span>/對)</p>
+            <p><strong>數量:</strong> <span id="quantity"></span> 對</p>
+            <p><strong>訂購人:</strong> <span id="orderName"></span></p>
+            <p style="font-size: 1.8em; color: #c0392b;"><strong>總金額:</strong> <span id="totalAmount"></span></p>
+        </div>
+
+        <div class="payment-options">
+            <div class="payment-card">
+                <h3>一、 Line Pay 線上付款 (推薦)</h3>
+                <div class="backend-tip">⚠️ 提醒: 此功能需要後端伺服器串接 Line Pay Payment API 才能實現。前端按鈕僅為示範。</div>
+                <a href="#" id="linePayButton" class="linepay-btn" onclick="alert('實際流程將跳轉至 Line Pay 頁面進行付款 (需後端串接)'); return false;">
+                    立即使用 Line Pay 付款
+                </a>
+            </div>
+
+            <div class="payment-card bank-info">
+                <h3>二、 銀行匯款</h3>
+                <p>請將款項匯入以下帳戶，匯款後請截圖並通知您的禮儀師。</p>
+                <p><strong>銀行名稱:</strong> 台灣銀行</p>
+                <p><strong>分行名稱:</strong> 仁愛分行</p>
+                <p><strong>帳號:</strong> 1234-5678-901234</p>
+                <p><strong>戶名:</strong> 祥安生命有限公司</p>
+                <p class="backend-tip">💡 提示: 匯款後需人工對帳，後台統計需禮儀師手動確認款項。</p>
+            </div>
+        </div>
+        
+        <p style="text-align: center; margin-top: 30px;">如有疑問，請聯繫您的禮儀師：<span id="musicianInfo"></span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalOrderDataStr = localStorage.getItem('finalOrderData');
+            const fubenDataStr = localStorage.getItem('fubenData');
+            
+            if (!finalOrderDataStr || !fubenDataStr) {
+                alert('錯誤：訂單數據遺失，請返回重新訂購。');
+                // window.location.href = 'order.html';
+                return;
+            }
+
+            const finalOrderData = JSON.parse(finalOrderDataStr);
+            const fubenData = JSON.parse(fubenDataStr);
+            const order = finalOrderData.order;
+            const customer = finalOrderData.customer;
+
+            // 填充訂單摘要
+            document.getElementById('deceasedName').textContent = `${fubenData.name}${fubenData.gender === '女' ? '女士' : '先生'} (於 ${fubenData.funeralLocation})`;
+            document.getElementById('flowerStyle').textContent = `${order.style} 款`;
+            document.getElementById('unitPrice').textContent = `NT$ ${order.unitPrice.toLocaleString()}`;
+            document.getElementById('quantity').textContent = order.quantity;
+            document.getElementById('orderName').textContent = `${customer.orderName} (${customer.contactTel})`;
+            document.getElementById('totalAmount').textContent = `NT$ ${order.total.toLocaleString()}`;
+            
+            document.getElementById('musicianInfo').textContent = `${fubenData.musician} (${fubenData.musicianPhone})`;
+
+            // *** 這是 Line Pay 串接的起點 ***
+            // 實際 Line Pay 流程：
+            // 1. 點擊按鈕 (linePayButton)
+            // 2. 瀏覽器發送 (AJAX/Fetch) 請求到您的後端伺服器 (Server)
+            // 3. 後端伺服器發送請求到 Line Pay API (Request API)
+            // 4. Line Pay 返回 Payment URL
+            // 5. 後端伺服器將 Payment URL 返回給前端
+            // 6. 前端 (JS) 將使用者導向 Line Pay URL
+
+            const linePayButton = document.getElementById('linePayButton');
+            linePayButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // *** 後端串接提示：您需要在此處替換為向後端發送請求的程式碼 ***
+                console.log("模擬發送訂單到後端，準備 Line Pay...");
+
+                const postData = {
+                    order_id: `FUBEN-${Date.now()}`, // 唯一的訂單 ID
+                    product_name: `花籃訂購 ${order.style}款 x ${order.quantity}對`,
+                    amount: order.total,
+                    customer_info: customer,
+                    return_url: window.location.origin + '/order_success.html', // 成功付款後跳回頁面
+                    cancel_url: window.location.origin + '/payment.html'
+                };
+                
+                // 這裡應該是 fetch('您的後端/api/linepay_request', { method: 'POST', body: JSON.stringify(postData) })
+                // 收到響應後，window.location.href = response.paymentUrl;
+                
+                // 由於沒有後端，僅作提示
+                alert(`模擬訂單創建成功，總金額 NT$ ${order.total.toLocaleString()}。請檢查瀏覽器 Console 輸出數據。`);
+            });
+            
+            // 可選：發送訂單到您的後台記錄系統（即便是匯款，也應該先記錄）
+            // sendOrderToBackend(finalOrderData); 
+        });
+        
+        // function sendOrderToBackend(orderData) {
+        //     // 這是一個模擬函數，實際應用中會將數據 POST 到您的伺服器
+        //     console.log("Sending order to backend for record keeping:", orderData);
+        //     // fetch('您的後端/api/save_order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderData) });
+        // }
+    </script>
+</body>
+</html>
