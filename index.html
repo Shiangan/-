@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雲端訃聞及花籃訂購應用程式</title>
+    <style>
+        /* 基礎樣式與表單樣式 (與前版相同) */
+        body { font-family: '微軟正黑體', 'Arial', sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #8B0000; }
+        h2 { border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 30px; color: #4682B4; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group input[type="tel"], .form-group select, .form-group textarea {
+            padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;
+        }
+        .form-row { display: flex; gap: 20px; }
+        .form-row > .form-group { flex: 1; }
+        .radio-group, .checkbox-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .checkbox-group label { font-weight: normal; }
+        button { background-color: #8B0000; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; transition: background-color 0.3s; }
+        button:hover { background-color: #A52A2A; }
+        
+        /* 訃聞網頁模擬區樣式 */
+        #output-wrapper { margin-top: 40px; }
+        #output-wrapper h3 { color: #8B0000; margin-bottom: 15px; }
+
+        .fuben-web-page {
+            border: 5px solid #000; /* 模擬瀏覽器邊框 */
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .header-section { text-align: center; margin-bottom: 30px; }
+        .header-section h4 { color: #8B0000; font-size: 1.5em; margin-bottom: 5px; }
+        .header-section a { color: #4682B4; text-decoration: none; font-weight: bold; }
+        .fuben-message { margin-bottom: 30px; padding: 20px; border: 1px dashed #ccc; background-color: #f9f9f9; }
+        .fuben-message h5 { color: #333; font-size: 1.2em; margin-top: 0; }
+
+        /* 訃聞正式內容樣式 */
+        .fuben-content-formal { text-align: center; font-size: 1.1em; line-height: 2.0; }
+        .fuben-content-formal h6 { font-size: 2em; color: #8B0000; margin-bottom: 15px; }
+        .deceased-info p { margin: 5px 0; }
+        .deceased-info strong { color: #444; }
+        .family-list-area { margin-top: 30px; padding-top: 15px; border-top: 1px dashed #ccc; }
+        .family-list-area p { text-align: left; }
+        .contact-info { margin-top: 20px; font-size: 0.9em; color: #666; }
+
+        /* 花籃訂購區 */
+        .order-section { margin-top: 30px; padding: 20px; background-color: #FFF0F5; border: 2px solid #A52A2A; border-radius: 8px; }
+        .order-section h4 { color: #A52A2A; border-bottom: 1px dashed #A52A2A; padding-bottom: 5px; }
+        .order-button { display: block; text-align: center; background-color: #4682B4; color: white; padding: 15px; margin-top: 15px; border-radius: 6px; text-decoration: none; font-size: 1.2em; font-weight: bold; transition: background-color 0.3s; }
+        .order-button:hover { background-color: #5A9BD6; }
+        .note { color: red; font-weight: bold; margin-top: 10px; }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 雲端訃聞資料輸入</h1>
+    <p>請依序填寫以下資料，以生成雲端訃聞內文及花籃訂購資訊。</p>
+    
+    <form id="fubenForm">
+        
+        <h2>👤 亡者資訊</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">亡者姓名：</label>
+                <input type="text" id="name" required value="王尚君">
+            </div>
+            <div class="form-group">
+                <label for="gender">性別：</label>
+                <select id="gender" required>
+                    <option value="男">男</option>
+                    <option value="女" selected>女</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+             <div class="form-group">
+                <label for="birthDate">出生日期（國曆 YYYY-MM-DD）：</label>
+                <input type="date" id="birthDate" required value="1993-02-20">
+            </div>
+            <div class="form-group">
+                <label for="deathDate">逝世日期（國曆 YYYY-MM-DD）：</label>
+                <input type="date" id="deathDate" required value="2023-05-04">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>是否有子嗣（用於稱謂：考/妣）：</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="hasChildren" value="有" checked> 有</label>
+                    <label><input type="radio" name="hasChildren" value="無"> 無</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>上面是否有長輩健在（用於稱謂：顯/故）：</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="hasElder" value="有" checked> 有</label>
+                    <label><input type="radio" name="hasElder" value="無"> 無</label>
+                </div>
+            </div>
+        </div>
+
+        <h2>🙏 治喪細節</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="religion">宗教選擇：</label>
+                <select id="religion" required>
+                    <option value="一般佛道" selected>一般佛道</option>
+                    <option value="純佛">純佛</option>
+                    <option value="基督教">基督教</option>
+                    <option value="天主教">天主教</option>
+                    <option value="日本教">日本教</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="musician">禮儀師與電話：</label>
+                <select id="musician" required>
+                    <option value="陳妍如 0978-583-699">陳妍如 0978-583-699</option>
+                    <option value="陳柏元 0938-179-858" selected>陳柏元 0938-179-858</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="music">音樂選擇：</label>
+          <select id="musician" required>
+                    <option value="music/1">音樂1</option>
+                    <option value="music/2" selected>音樂2</option>
+                </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="ashesPlacement">牌位/骨灰安置地點：</label>
+            <input type="text" id="ashesPlacement" required value="二殯蓮位堂">
+        </div>
+
+        <h2>🗓️ 儀式安排</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="funeralDate">出殯日期（國曆 YYYY-MM-DD）：</label>
+                <input type="date" id="funeralDate" required value="2024-05-20">
+            </div>
+            <div class="form-group">
+                <label for="funeralLocation">出殯/告別式地點（禮廳）：</label>
+                <input type="text" id="funeralLocation" required value="二殯［至愛一廳］">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="jiadianTime">家奠禮時間（HH:MM）：</label>
+                <input type="time" id="jiadianTime" required value="08:30">
+            </div>
+            <div class="form-group">
+                <label for="gongdianTime">公奠禮時間（HH:MM）：</label>
+                <input type="time" id="gongdianTime" required value="09:00">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="disposalType">後續處理：</label>
+            <select id="disposalType" required>
+                <option value="火化" selected>火化 (發引火葬場)</option>
+                <option value="土葬">土葬 (安厝)</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="disposalDetailGroup" style="display:none;">
+            <label for="disposalDetail">安厝於 [公墓名稱]：</label>
+            <input type="text" id="disposalDetail" placeholder="請輸入公墓名稱">
+        </div>
+
+
+        <h2>👨‍👩‍👧‍👦 家屬與發文人資訊</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="authorRole">發訃聞者角色：</label>
+                <select id="authorRole" required>
+                    <option value="妻子">妻子</option>
+                    <option value="丈夫">丈夫</option>
+                    <option value="兒子/女兒">兒子/女兒</option>
+                    <option value="胞兄">胞兄</option>
+                    <option value="胞弟">胞弟</option>
+                    <option value="胞姊" selected>胞姊</option>
+                    <option value="胞妹">胞妹</option>
+                    <option value="孫子">孫子</option>
+                    <option value="侄子">侄子</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="authorName">發訃聞者姓名：</label>
+                <input type="text" id="authorName" required value="王宥忻">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="familyList">主要家屬名單（請列出稱謂與姓名，如：胞姊 王宥忻 胞姊夫 謝拉...）：</label>
+            <textarea id="familyList" rows="4" required placeholder="如：孝男 王大寶 孝媳 林小美...（請務必寫上所有親屬稱謂與姓名）">胞姊 王宥忻 胞姊夫 謝拉 胞妹 曾曾 胞妹婿 葬經 反服母 xxx</textarea>
+        </div>
+
+        <h2>📞 聯繫資訊</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contactName">聯繫人：</label>
+                <input type="text" id="contactName" required value="王宥忻">
+            </div>
+            <div class="form-group">
+                <label for="contactPhone">聯繫電話：</label>
+                <input type="tel" id="contactPhone" required value="0938118228">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="contactAddress">聯繫地址：</label>
+            <input type="text" id="contactAddress" required value="深坑區">
+        </div>
+        
+        <h2>💐 禮品/花籃資訊</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label>是否收受奠儀/禮金：</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="acceptGift" value="有"> 有</label>
+                    <label><input type="radio" name="acceptGift" value="無" checked> 無</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>是否統一致贈花籃（是：由公司統一規劃樣式）：</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="unifiedFlower" value="是" checked> 是</label>
+                    <label><input type="radio" name="unifiedFlower" value="否"> 否</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" id="flowerStyleGroup">
+            <label>花籃樣式選擇 (A-H，供統製參考)：</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="flowerStyle" value="A" checked> A</label>
+                <label><input type="checkbox" name="flowerStyle" value="B" checked> B</label>
+                <label><input type="checkbox" name="flowerStyle" value="C" checked> C</label>
+                <label><input type="checkbox" name="flowerStyle" value="D" checked> D</label>
+                <label><input type="checkbox" name="flowerStyle" value="E" checked> E</label>
+                <label><input type="checkbox" name="flowerStyle" value="F" checked> F</label>
+                <label><input type="checkbox" name="flowerStyle" value="G" checked> G</label>
+                <label><input type="checkbox" name="flowerStyle" value="H" checked> H</label>
+            </div>
+        </div>
+
+        <button type="submit">生成雲端訃聞網頁內容</button>
+    </form>
+
+    <div id="output-wrapper">
+        <h3>📄 模擬生成的雲端訃聞網頁內容</h3>
+        </div>
+</div>
+
+<script>
+    document.getElementById('fubenForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateFuben();
+        // 提交後滾動到輸出區
+        document.getElementById('output-wrapper').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // 處理土葬/火化細節顯示
+    document.getElementById('disposalType').addEventListener('change', function() {
+        const detailGroup = document.getElementById('disposalDetailGroup');
+        if (this.value === '土葬') {
+            detailGroup.style.display = 'block';
+            document.getElementById('disposalDetail').setAttribute('required', 'required');
+        } else {
+            detailGroup.style.display = 'none';
+            document.getElementById('disposalDetail').removeAttribute('required');
+        }
+    });
+
+    // 處理統一花籃選擇，決定是否顯示樣式選擇
+    document.querySelectorAll('input[name="unifiedFlower"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const styleGroup = document.getElementById('flowerStyleGroup');
+            if (this.value === '是') {
+                styleGroup.style.display = 'block';
+            } else {
+                styleGroup.style.display = 'block'; // 即使不統一製作，樣式選擇也用於參考
+            }
+        });
+    });
+
+
+    function calculateAge(birthDateStr, deathDateStr) {
+        const birthDate = new Date(birthDateStr);
+        const deathDate = new Date(deathDateStr);
+
+        if (isNaN(birthDate) || isNaN(deathDate)) { return 0; }
+        
+        // 虛歲 = (死亡年份 - 出生年份) + 1
+        return deathDate.getFullYear() - birthDate.getFullYear() + 1;
+    }
+
+    function getAgeTitle(age) {
+        if (age <= 30) return "得年";
+        if (age < 60) return "享年";
+        if (age <= 90) return "享壽";
+        if (age < 100) return "享耆壽";
+        return "享嵩壽";
+    }
+
+    function getDeceasedTitle(gender, hasChildren, hasElder) {
+        const hasChild = hasChildren === '有';
+        const hasEld = hasElder === '有';
+
+        if (!hasChild) { return '故'; } // 無子女者，簡稱故
+        
+        if (gender === '男') {
+            return hasEld ? '故考' : '顯考';
+        } else { // 女
+            return hasEld ? '故妣' : '顯妣';
+        }
+    }
+
+
+    function generateFuben() {
+        // 1. 收集所有表單數據 (與前版相同)
+        const data = {
+            name: document.getElementById('name').value,
+            gender: document.getElementById('gender').value,
+            birthDate: document.getElementById('birthDate').value,
+            deathDate: document.getElementById('deathDate').value,
+            hasChildren: document.querySelector('input[name="hasChildren"]:checked').value,
+            hasElder: document.querySelector('input[name="hasElder"]:checked').value,
+            
+            religion: document.getElementById('religion').value,
+            musician: document.getElementById('musician').value,
+            music: document.getElementById('music').value,
+            ashesPlacement: document.getElementById('ashesPlacement').value,
+            
+            funeralDate: document.getElementById('funeralDate').value,
+            funeralLocation: document.getElementById('funeralLocation').value,
+            jiadianTime: document.getElementById('jiadianTime').value,
+            gongdianTime: document.getElementById('gongdianTime').value,
+            disposalType: document.getElementById('disposalType').value,
+            disposalDetail: document.getElementById('disposalDetail').value,
+
+            authorRole: document.getElementById('authorRole').value,
+            authorName: document.getElementById('authorName').value,
+            familyList: document.getElementById('familyList').value,
+
+            contactName: document.getElementById('contactName').value,
+            contactPhone: document.getElementById('contactPhone').value,
+            contactAddress: document.getElementById('contactAddress').value,
+            
+            acceptGift: document.querySelector('input[name="acceptGift"]:checked').value,
+            unifiedFlower: document.querySelector('input[name="unifiedFlower"]:checked').value,
+            flowerStyles: Array.from(document.querySelectorAll('input[name="flowerStyle"]:checked')).map(cb => cb.value).join(', ')
+        };
+
+        // 2. 處理日期和稱謂
+        const age = calculateAge(data.birthDate, data.deathDate);
+        const ageTitle = getAgeTitle(age);
+        const deceasedTitle = getDeceasedTitle(data.gender, data.hasChildren, data.hasElder);
+        
+        // 格式化日期：將 YYYY-MM-DD 轉為 YYYY.MM.DD
+        const birthYMD = data.birthDate.replace(/-/g, '.');
+        const deathYMD = data.deathDate.replace(/-/g, '.');
+        const funeralYMD = data.funeralDate.replace(/-/g, '.');
+        
+        // 取得農曆月份日期 (這裡簡化，直接用國曆日期，實務上需要複雜的農曆轉換函式)
+        const deathDateObj = new Date(data.deathDate);
+        const deathMonth = deathDateObj.getMonth() + 1;
+        const deathDay = deathDateObj.getDate();
+        
+        // 處理後續處理語句
+        let disposalPhrase = '';
+        if (data.disposalType === '火化') {
+            disposalPhrase = `隨即發引火葬場火化。`;
+        } else {
+            disposalPhrase = `隨即安厝於 ${data.disposalDetail} 公墓安息。`;
+        }
+        
+        // 4. 花籃與收禮資訊區塊
+        let flowerOrderingInfo = '';
+        let giftNote = '';
+
+        if (data.acceptGift === '無') {
+            giftNote = `<p class="note">★ 家屬懇辭奠儀、花籃、花圈等所有禮品，您的心意我們心領了。</p>`;
+        } else {
+            giftNote = `<p>親友若欲致贈奠儀，家屬謹此代亡者收受。</p>`;
+        }
+        
+        if (data.unifiedFlower === '是') {
+            flowerOrderingInfo = `
+                <div class="order-section">
+                    <h4>🌷 統一追思花禮訂購（樣式：${data.flowerStyles}）</h4>
+                    <p>為使告別式會場莊嚴及風格一致，家屬採<span style="color:#A52A2A;">【統一致贈花籃/花禮】</span>。</p>
+                    <p>請親友於追思網頁上點擊下方按鈕進行訂購，並註明送禮人/公司名稱，以利製作者作業。</p>
+                    <a href="https://24hour.xn--kpry57d/order-form?style=${data.flowerStyles.replace(/, /g, '')}" target="_blank" class="order-button">點此進入【${data.flowerStyles} 樣式】花籃訂購區</a>
+                </div>
+            `;
+        } else {
+            flowerOrderingInfo = `
+                <div class="order-section">
+                    <h4>🌷 自行訂購花籃/花禮</h4>
+                    <p>家屬開放親友自行訂購花籃/花圈，請於 **${data.funeralDate} 12:00 前** 送達會場 **${data.funeralLocation}**。</p>
+                    <p>聯繫電話：${data.contactPhone}</p>
+                    <p>若需代為安排，亦可參考我們的推薦樣式：${data.flowerStyles}，並聯繫禮儀師。</p>
+                </div>
+            `;
+        }
+
+
+        // 5. 拼接完整的網頁模擬內容
+        const outputHTML = `
+            <div class="fuben-web-page">
+                
+                <div class="header-section">
+                    [attachment_0](attachment)<br>
+                    <h4>${data.name} ${data.gender === '女' ? '女士' : '先生'} 追思紀念網頁</h4>
+                    <p>
+                        <a href="https://24hour.xn--kpry57d/${data.name.replace(/\s/g, '-')}" target="_blank">
+                            https://24hour.xn--kpry57d/${data.name.replace(/\s/g, '-')}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="fuben-message">
+                    <h5>【家屬致親友函】</h5>
+                    <p>謹致諸位親友：</p>
+                    <p>我們摯愛的 ${data.name} ${data.gender === '女' ? '女士' : '先生'}，慟於中華民國 ${deathYMD} 安詳辭世。衷心感謝諸位親友的慰問與陪伴。</p>
+                    <p>我們將於 ${data.funeralDate} 於 ${data.funeralLocation} 為 ${data.name} 舉辦告別儀式，敬邀您一同參與這場人生的畢業典禮。</p>
+                    <p>無論您親臨會場與我們一同緬懷，抑或不克前來，全體家屬均深深感謝您的關懷！</p>
+                </div>
+
+                <div class="fuben-content-formal">
+                    <h6>【訃 聞】</h6>
+                    <p><strong>不孝 ${data.authorRole} ${data.authorName} 泣啟</strong></p>
+
+                    <div class="deceased-info">
+                        <p><strong>故</strong> ${data.name} ${data.gender === '女' ? '孺人' : '先生'}（${data.name}）</p>
+                        <p>慟於 中華民國 ${deathYMD}（農曆 ${deathMonth} 月 ${deathDay} 日）安詳辭世。</p>
+                        <p>享 ${ageTitle} ${age} 歲。</p>
+                    </div>
+
+                    <div class="rituals-info" style="margin-top: 25px;">
+                        <p><strong>謹訂於</strong> 中華民國 ${funeralYMD}（星期一）</p>
+                        <p><strong>假座</strong> ${data.funeralLocation} 舉行入殮及告別儀式。</p>
+                        <p><strong>家奠禮：</strong>上午 ${data.jiadianTime}</p>
+                        <p><strong>公奠禮：</strong>上午 ${data.gongdianTime}</p>
+                        <p><strong>儀式後：</strong>${disposalPhrase}</p>
+                        <p><strong>追思音樂：</strong>${data.music} | <strong>宗教：</strong>${data.religion}</p>
+                    </div>
+                    
+                    <div class="family-list-area">
+                        <p style="font-weight: bold;">【孝思親屬名單】</p>
+                        <p>${data.familyList}</p>
+                    </div>
+
+                </div>
+
+                ${flowerOrderingInfo}
+
+                <div class="order-section" style="background-color: #F8F8FF; border: 1px dashed #4682B4;">
+                    <h4>☎️ 治喪事宜聯繫</h4>
+                    ${giftNote}
+                    <p>禮儀師：${data.musician}</p>
+                    <p>家屬代表：${data.contactName} (${data.contactPhone})</p>
+                </div>
+
+            </div>
+        `;
+        
+        document.getElementById('output-wrapper').innerHTML = outputHTML;
+    }
+    
+    // 頁面載入時執行一次，顯示範例數據的結果
+    document.addEventListener('DOMContentLoaded', generateFuben);
+
+</script>
+
+</body>
+</html>
