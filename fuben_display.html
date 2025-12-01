@@ -1,23 +1,349 @@
-<section id="donate-flower">
-  <h3><strong>致贈花籃，送上祝福</strong></h3>
-  <p id="flower-note"><strong>花籃說明將由 JS 填充</strong></p>
-  <a href="order.html" class="btn-order"><strong>線上選擇花籃與訂購</strong></a> 
-  <a href="javascript:void(0);" id="show-flower-baskets" class="btn"><strong>顯示花籃樣式 🌹</strong></a>
-</section>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【數位訃聞】追思故 王尚君 女士</title>
+    <style>
+        /* Base Styles */
+        body { 
+            font-family: 'Noto Sans TC', '微軟正黑體', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f0f0f0; 
+            color: #333;
+            line-height: 1.6;
+        }
+        .fuben-container {
+            max-width: 650px;
+            margin: 20px auto;
+            background: white;
+            padding: 0 30px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ... (JS 讀取數據、輔助函數、填充 <head>, <audio>, <h1>, 圖片, Life Story, Remembrance 等邏輯保持不變) ...
+        /* Header & Deceased Info */
+        .header {
+            text-align: center;
+            padding: 30px 0 20px;
+            border-bottom: 3px solid #e0e0e0;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            color: #444;
+            margin-bottom: 5px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+        .photo-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+        #deceasedPhotoDisplay {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-        // ... (交通資訊邏輯保持不變) ...
+        /* Content Sections */
+        .content-section {
+            margin-top: 30px;
+            padding: 15px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .content-section:last-child {
+            border-bottom: none;
+        }
+        .content-section h2 {
+            font-size: 1.4em;
+            color: #795548; /* 棕色調 */
+            border-left: 5px solid #795548;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .detail-item strong {
+            flex-basis: 120px;
+            font-weight: bold;
+            color: #555;
+            flex-shrink: 0;
+        }
+        .detail-item span {
+            flex-grow: 1;
+        }
+        .ashes-detail {
+            white-space: pre-wrap; /* 處理換行 */
+        }
         
-        // ----------------------------------------------------
-        // **調整: 確保花籃按鈕的 href 是正確的**
-        // 雖然 HTML 已經改為 order.html，但如果有 JS 覆蓋，這裡需檢查
-        // 確保 .btn-order 的連結在 HTML 中直接設置為 order.html 即可
-        // ----------------------------------------------------
-    });
-</script>
+        /* Action Buttons & Footer */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 3px solid #e0e0e0;
+        }
+        .action-buttons a, .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .action-buttons .flower-btn {
+            background-color: #4CAF50; /* 綠色 */
+            color: white;
+        }
+        .action-buttons .flower-btn:hover {
+            background-color: #45a049;
+        }
+        .action-buttons .contact-btn {
+            background-color: #2196F3; /* 藍色 */
+            color: white;
+        }
+        .action-buttons .contact-btn:hover {
+            background-color: #0b7dda;
+        }
 
+        .responsible-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .responsible-info img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .responsible-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #888;
+        }
+        .paper-link, .card-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .paper-link a, .card-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.95em;
+        }
+
+        /* Audio Player */
+        #musicPlayer {
+            display: none; /* 預設隱藏，若有音樂再顯示 */
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="fuben-container">
+        <audio id="musicPlayer" controls loop></audio>
+
+        <div class="header">
+            <p><strong>【數位訃聞】</strong></p>
+            <h1>追思故 <span id="deceasedName">亡者姓名</span> <span id="deceasedGenderTitle">女士</span></h1>
+            <p>享壽 <span id="deceasedAge">虛歲</span> 歲</p>
+        </div>
+
+        <div class="photo-section">
+            <img id="deceasedPhotoDisplay" src="default_photo.jpg" alt="亡者追思照片">
+        </div>
+        
+        <div class="content-section">
+            <h2>🕊️ 辭世資訊</h2>
+            <div class="detail-item">
+                <strong>姓名/性別:</strong>
+                <span><span id="nameInfo"></span> / <span id="genderInfo"></span></span>
+            </div>
+            <div class="detail-item">
+                <strong>出生日期:</strong>
+                <span id="birthDateInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>辭世日期 (國曆):</strong>
+                <span id="deathDateInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>辭世日期 (農曆):</strong>
+                <span id="deathLunarDateInfo"></span>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>📅 儀式地點</h2>
+            <div class="detail-item">
+                <strong>出殯日期:</strong>
+                <span id="funeralDateInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>家奠時間:</strong>
+                <span id="jiadianTimePhraseInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>出殯地點:</strong>
+                <span id="funeralLocationInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>安葬/火化:</strong>
+                <span id="disposalTypeInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>靈骨安厝:</strong>
+                <span class="ashes-detail" id="ashesPlacementDetailInfo"></span>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>📞 聯絡資訊</h2>
+            <div class="detail-item">
+                <strong>連絡處地址:</strong>
+                <span id="contactAddressInfo"></span>
+            </div>
+            <div class="detail-item">
+                <strong>家屬連絡人 A:</strong>
+                <span><span id="contactNameAInfo"></span> (<span id="contactPhoneAInfo"></span>)</span>
+            </div>
+            <div class="detail-item">
+                <strong>家屬連絡人 B:</strong>
+                <span><span id="contactNameBInfo"></span> (<span id="contactPhoneBInfo"></span>)</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a id="flowerOrderLink" href="flower_order_form.html" class="flower-btn">💐 線上訂購花籃</a> 
+            <a id="musicianCallLink" href="tel:0933789012" class="contact-btn">📱 聯絡禮儀師</a>
+        </div>
+        
+        <div class="paper-link">
+            <a id="obituaryPaperLink" href="#" target="_blank">📄 點此查看原始訃聞紙本照片</a>
+        </div>
+
+        <div class="responsible-info">
+            <img id="responsiblePersonImgDisplay" src="default_responsible.jpg" alt="禮儀師照片">
+            <div>
+                <p>承辦禮儀師: <span id="musicianInfo"></span></p>
+                <p>服務電話: <span id="musicianPhoneInfo"></span></p>
+                <div class="card-link">
+                    <a id="businessCardImgLink" href="#" target="_blank">📇 查看禮儀公司名片</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 讀取儲存的數據
+            const fubenDataString = localStorage.getItem('fubenData');
+            if (!fubenDataString) {
+                alert('找不到訃聞數據，請先返回輸入頁面填寫。');
+                return;
+            }
+            const data = JSON.parse(fubenDataString);
+
+            // 2. 數據綁定到頁面元素
+            
+            // Header & Deceased Info
+            document.getElementById('deceasedName').textContent = data.name;
+            document.getElementById('deceasedGenderTitle').textContent = data.gender === '女' ? '女士' : '先生';
+            document.getElementById('deceasedAge').textContent = data.age;
+            
+            // Photo
+            const photoDisplay = document.getElementById('deceasedPhotoDisplay');
+            if (data.deceasedPhoto) {
+                photoDisplay.src = data.deceasedPhoto;
+            }
+
+            // Deceased Info
+            document.getElementById('nameInfo').textContent = data.name;
+            document.getElementById('genderInfo').textContent = data.gender;
+            document.getElementById('birthDateInfo').textContent = data.birthDate;
+            document.getElementById('deathDateInfo').textContent = data.deathDate;
+            document.getElementById('deathLunarDateInfo').textContent = data.deathLunarDate;
+
+            // Ceremony Info
+            document.getElementById('funeralDateInfo').textContent = data.funeralDate;
+            document.getElementById('jiadianTimePhraseInfo').textContent = data.jiadianTimePhrase;
+            document.getElementById('funeralLocationInfo').textContent = data.funeralLocation;
+            document.getElementById('disposalTypeInfo').textContent = data.disposalType;
+            document.getElementById('ashesPlacementDetailInfo').textContent = data.ashesPlacementDetail;
+
+            // Contact Info
+            document.getElementById('contactAddressInfo').textContent = data.contactAddress;
+            document.getElementById('contactNameAInfo').textContent = data.contactNameA;
+            document.getElementById('contactPhoneAInfo').textContent = data.contactPhoneA;
+            document.getElementById('contactNameBInfo').textContent = data.contactNameB;
+            document.getElementById('contactPhoneBInfo').textContent = data.contactPhoneB;
+
+            // Responsible Person/Musician Info
+            document.getElementById('musicianInfo').textContent = data.musician;
+            document.getElementById('musicianPhoneInfo').textContent = data.musicianPhone;
+            
+            const responsiblePhotoDisplay = document.getElementById('responsiblePersonImgDisplay');
+            if (data.responsiblePersonImg) {
+                responsiblePhotoDisplay.src = data.responsiblePersonImg;
+            }
+
+            // 3. 動作連結設定
+            
+            // 聯絡禮儀師 (撥打電話)
+            document.getElementById('musicianCallLink').href = `tel:${data.musicianPhone.replace(/-/g, '')}`;
+
+            // 紙本照片連結
+            const paperLink = document.getElementById('obituaryPaperLink');
+            if (data.obituaryPaper) {
+                paperLink.href = data.obituaryPaper;
+            } else {
+                paperLink.style.display = 'none'; // 如果沒有照片，隱藏連結
+            }
+
+            // 名片連結
+            const cardLink = document.getElementById('businessCardImgLink');
+            if (data.businessCardImg) {
+                cardLink.href = data.businessCardImg;
+            } else {
+                cardLink.style.display = 'none'; // 如果沒有名片，隱藏連結
+            }
+            
+            // 花籃訂購連結 (此處假設導向另一個訂購頁面 `flower_order_form.html`)
+            // 這裡可以根據 data.unifiedFlower 設定不同的邏輯
+            if (data.unifiedFlower === '否') {
+                 document.getElementById('flowerOrderLink').textContent = '💐 線上自訂花籃';
+            } else {
+                 document.getElementById('flowerOrderLink').textContent = '💐 統一訂購花籃 (樣式:' + data.flowerStyles + ')';
+            }
+
+            // 4. 背景音樂設置
+            const musicPlayer = document.getElementById('musicPlayer');
+            if (data.musicPath) {
+                musicPlayer.src = data.musicPath + '.mp3'; // 假設音樂檔為 .mp3
+                musicPlayer.style.display = 'block';
+                // 註: 瀏覽器可能限制自動播放，通常需要用戶互動
+                // musicPlayer.play().catch(e => console.log("無法自動播放音樂:", e));
+            }
+        });
+    </script>
 </body>
 </html>
