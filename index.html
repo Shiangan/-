@@ -255,6 +255,7 @@
             <option value="custom">自訂地點 (手動輸入)</option>
         </select>
     </div>
+    
     <div class="form-group">
         <label for="verticalAddress">豎靈地點名稱 (例：新北板橋殯儀館)</label>
         <input type="text" id="verticalAddress" placeholder="新北板橋殯儀館">
@@ -275,7 +276,15 @@
         <label for="mapIframeLink">Google Map 內嵌 iframe 連結</label>
         <input type="text" id="mapIframeLink" placeholder="例如：<iframe src='...'> 裡面的 src 內容">
     </div>
-
+    
+    <div class="form-group">
+        <label for="transportText">主要交通指引文字 (例如：捷運、公車路線)</label>
+        <textarea id="transportText" placeholder="填寫大眾運輸路線、接駁車資訊等..."></textarea>
+    </div>
+    <div class="form-group">
+        <label for="parkingText">停車資訊文字 (例如：停車場位置、注意事項)</label>
+        <textarea id="parkingText" placeholder="填寫自駕停車指引、停車場容量等..."></textarea>
+    </div>
     <div class="input-group">
         <div class="form-group">
             <label for="musician" class="required">禮儀師姓名</label>
@@ -379,52 +388,57 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyBtn = document.getElementById('copy-button');
     const jumpBtn = document.getElementById('jump-button');
     
-    // --- 地點資料庫 ---
+    // --- 地點資料庫 (含詳細交通資訊) ---
     const LOCATION_DATA = {
         banqiao: {
             verticalAddress: "新北板橋殯儀館",
             address: "新北市板橋區新海路135號",
             funeralLocationDefault: "新北板橋殯儀館 - 景福廳",
-            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.1189901763784!2d121.4646061150041!3d25.03058858397359!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a81831c19815%3A0x1d58d9279a02476b!2z5paw6Jyc5pyD5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256037000!5m2!1szh-TW!2stw",
-            thanks: "治喪期間，諸多不便，敬請諒解。\n板橋殯儀館交通繁忙，建議搭乘大眾運輸或共乘。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
-            mapImg1: "image/transport/banqiao_guide.jpg", // 假設您有對應的交通圖
-            mapImg2: "image/transport/banqiao_park.jpg"
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.1189901763784!2d121.4646061150041!3d25.03058858397359!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a81831c19815%3A0x1d58d9279a02476b!2z5paw6Jyc5pyD5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256037000!5m2!1szh-TW!2stw", // 請替換為真實 Map 連結
+            thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "image/transport/banqiao_guide.jpg", 
+            mapImg2: "image/transport/banqiao_park.jpg",
+            transportText: "【大眾運輸】\n捷運/火車：搭乘至板橋站後，轉乘計程車或公車（310, 307, 786, 810, 857, F501 等）至新海路站牌下車，步行約 5 分鐘。",
+            parkingText: "【停車資訊】\n館內設有地下停車場（新海路出入口），車位有限，建議搭乘大眾運輸工具。周邊亦有收費停車場或停車格可供利用。"
         },
         sec_taipei: {
             verticalAddress: "台北市第二殯儀館",
             address: "臺北市大安區辛亥路三段330號",
             funeralLocationDefault: "臺北市第二殯儀館 - 景仰廳",
-            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.426294717144!2d121.54581291500392!3d25.01977798398188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a9b340000001%3A0x6b8f38d38e0787d5!2z5Y-w5Lit5ZyL5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256111000!5m2!1szh-TW!2stw",
-            thanks: "治喪期間，諸多不便，敬請諒解。\n二殯周邊停車不易，建議多利用接駁服務或計程車。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.426294717144!2d121.54581291500392!3d25.01977798398188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a9b340000001%3A0x6b8f38d38e0787d5!2z5Y-w5Lit5ZyL5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256111000!5m2!1szh-TW!2stw", // 請替換為真實 Map 連結
+            thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
             mapImg1: "image/transport/erbin_guide.jpg",
-            mapImg2: "image/transport/erbin_park.jpg"
+            mapImg2: "image/transport/erbin_park.jpg",
+            transportText: "【大眾運輸】\n捷運：搭乘文湖線至六張犁站或辛亥站，步行約 15 分鐘或轉搭接駁車。\n免費接駁車：富德線、辛亥線皆有接駁服務，詳情請參閱臺北市殯葬處網站。",
+            parkingText: "【停車資訊】\n二殯設有地下停車場，但車位極為有限，尖峰時段一位難求。建議多加利用大眾運輸工具及接駁車。"
         },
         taoyuan: {
             verticalAddress: "桃園市殯葬園區",
             address: "桃園市桃園區大有路896號",
             funeralLocationDefault: "桃園市殯葬園區 - 懷德廳",
-            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.0645607370884!2d121.32833071500585!3d25.10901518390885!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34682029b35a396b%3A0x1d752c1e7a030001!2z5qGM6YCH5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256165000!5m2!1szh-TW!2stw",
-            thanks: "治喪期間，諸多不便，敬請諒解。\n桃園殯葬園區路途較遠，請預留充裕時間。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.0645607370884!2d121.32833071500585!3d25.10901518390885!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34682029b35a396b%3A0x1d752c1e7a030001!2z5qGM6YCH5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256165000!5m2!1szh-TW!2stw", // 請替換為真實 Map 連結
+            thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
             mapImg1: "image/transport/taoyuan_guide.jpg",
-            mapImg2: "image/transport/taoyuan_park.jpg"
+            mapImg2: "image/transport/taoyuan_park.jpg",
+            transportText: "【大眾運輸】\n火車：搭乘至桃園車站後，轉乘計程車或市區公車（L111A, L111B）至園區站牌下車。",
+            parkingText: "【停車資訊】\n園區設有平面停車場，車位較為充裕。請依照工作人員或標示引導停放。"
         },
         zhongli: {
             verticalAddress: "中壢御殿園",
             address: "桃園市中壢區培英路356號",
             funeralLocationDefault: "中壢御殿園 - A廳",
-            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.88219468087!2d121.24434971500516!3d25.08053608393527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3468233f2c5d1791%3A0xf5c9b74070a72c1e!2z5Lit5bGl5Zub5a6u5ZyL!5e0!3m2!1szh-TW!2stw!4v1678256220000!5m2!1szh-TW!2stw",
-            thanks: "治喪期間，諸多不便，敬請諒解。\n御殿園位置相對偏僻，建議使用導航。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.88219468087!2d121.24434971500516!3d25.08053608393527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3468233f2c5d1791%3A0xf5c9b74070a72c1e!2z5Lit5bGl5Zub5a6u5ZyL!5e0!3m2!1szh-TW!2stw!4v1678256220000!5m2!1szh-TW!2stw", // 請替換為真實 Map 連結
+            thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
             mapImg1: "image/transport/zhongli_guide.jpg",
-            mapImg2: "image/transport/zhongli_park.jpg"
+            mapImg2: "image/transport/zhongli_park.jpg",
+            transportText: "【大眾運輸】\n火車：搭乘至中壢車站，轉乘計程車約 15 分鐘可達。\n公車：目前無直達公車，建議搭乘計程車或自駕前往。",
+            parkingText: "【停車資訊】\n御殿園設有大型免費停車場，提供充裕車位，不需擔心停車問題。"
         },
         custom: {
-            verticalAddress: "",
-            address: "",
-            funeralLocationDefault: "",
-            mapIframeLink: "",
+            // 保持清空，讓用戶手動輸入
+            verticalAddress: "", address: "", funeralLocationDefault: "", mapIframeLink: "", 
             thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
-            mapImg1: "",
-            mapImg2: ""
+            mapImg1: "", mapImg2: "", transportText: "", parkingText: ""
         }
     };
     // ----------------------
@@ -452,7 +466,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('funeralLocation').value = data.funeralLocationDefault;
             document.getElementById('mapIframeLink').value = data.mapIframeLink;
             
-            // 自動填寫結尾感謝詞與交通圖路徑
+            // 自動填寫交通、感謝詞與交通圖路徑
+            document.getElementById('transportText').value = data.transportText; // 新增
+            document.getElementById('parkingText').value = data.parkingText;   // 新增
             document.getElementById('obituaryThanks').value = data.thanks;
             document.getElementById('mapImg1').value = data.mapImg1;
             document.getElementById('mapImg2').value = data.mapImg2;
@@ -464,6 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
                  document.getElementById('contactAddress').value = "";
                  document.getElementById('funeralLocation').value = "";
                  document.getElementById('mapIframeLink').value = "";
+                 document.getElementById('transportText').value = ""; // 清空
+                 document.getElementById('parkingText').value = "";   // 清空
             }
         }
     };
@@ -529,6 +547,11 @@ document.addEventListener('DOMContentLoaded', function() {
             funeralLocation: document.getElementById('funeralLocation').value.trim(),
             contactAddress: document.getElementById('contactAddress').value.trim(),
             mapIframeLink: document.getElementById('mapIframeLink').value.trim(),
+            
+            // **** 新增的交通資訊欄位加入 data 對象 ****
+            transportText: document.getElementById('transportText').value.trim(), 
+            parkingText: document.getElementById('parkingText').value.trim(), 
+            // *******************************************
 
             musician: document.getElementById('musician').value.trim(),
             musicianPhone: document.getElementById('musicianPhone').value.trim(),
