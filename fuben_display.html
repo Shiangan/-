@@ -140,15 +140,17 @@
         }
         .transport-section h2 { font-family: 'Iansui', 'Noto Serif TC', serif; font-size: 28px; margin-bottom: 20px; color: #3d2b1f; }
         .transport-details { display: flex; flex-wrap: wrap; justify-content: space-around; text-align: left; padding: 10px 0; }
-        .transport-item { margin: 10px; }
+        .transport-item { margin: 10px; flex-basis: 45%; /* 確保兩欄佈局 */ }
         .transport-item h3, .transport-item h4 { color: #8b5e3c; margin-bottom: 5px; }
-        .transport-item p { margin: 3px 0; }
+        .transport-item p { margin: 3px 0; white-space: pre-line; /* 修正：讓文字欄位可以換行 */ }
         .map-link { display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none; font-weight: bold; }
         .image-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; justify-items: center; margin-top: 15px; }
         .gallery-img { width: 100%; height: auto; border-radius: 10px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
         .gallery-img:hover { transform: scale(1.08); box-shadow: rgba(0, 0, 0, 0.2) 0 8px 16px; }
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; animation: fadeInLightbox 0.3s forwards; }
         @keyframes fadeInLightbox { to { opacity: 1; } }
+        @media (max-width: 600px) { .transport-item { flex-basis: 100%; } }
+
 
         /* 參加喪禮區塊 */
         .funeral-attend { font-family: 'Iansui', 'Noto Serif TC', serif; max-width: 760px; margin: 40px auto; padding: 36px 24px; text-align: center; background-color: #ffffff; border: 2px solid #d9c3a3; border-radius: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.08); animation: fadeInUp 0.8s ease forwards; }
@@ -354,19 +356,19 @@ document.addEventListener('DOMContentLoaded', function () {
 <div id="image-overlay"><img id="overlay-img" src="" alt=""></div>
 
 <div id="fixed-links">
-  <a id="link-fixed-musicianPhone" href="tel:"><img src="image/24小時專線.png" alt="24小時服務電話"></a>
-  <a id="link-fixed-lineContactLink" href="#" target="_blank"><img src="image/聯繫line.PNG" alt="LINE 聯絡我們"></a>
+  <a id="link-fixed-musicianPhone" href="tel:"><img src="image/24小時專線.png" alt="24小時服務電話" loading="lazy"></a>
+  <a id="link-fixed-lineContactLink" href="#" target="_blank"><img src="image/聯繫line.PNG" alt="LINE 聯絡我們" loading="lazy"></a>
 </div>
 
 <section id="business-card">
-  <img id="disp-businessCardImg" src="" alt="名片" class="business-card-img">
+  <img id="disp-businessCardImg" src="" alt="名片" class="business-card-img" loading="lazy">
 </section>
 
 <section id="share-buttons">
   <h2><strong>分享此頁面</strong></h2>
   <div class="share-btns">
-    <a href="#" target="_blank" class="share-btn fb-share-btn" aria-label="Share on Facebook"><img src="image/fb.png" alt="Share on Facebook"></a>
-    <a href="#" target="_blank" class="share-btn line-share-btn" aria-label="Share on Line"><img src="image/line.png" alt="Share on Line"></a>
+    <a href="#" target="_blank" class="share-btn fb-share-btn" aria-label="Share on Facebook"><img src="image/fb.png" alt="Share on Facebook" loading="lazy"></a>
+    <a href="#" target="_blank" class="share-btn line-share-btn" aria-label="Share on Line"><img src="image/line.png" alt="Share on Line" loading="lazy"></a>
   </div>
 </section>
 
@@ -374,18 +376,14 @@ document.addEventListener('DOMContentLoaded', function () {
   <h2><strong>交通資訊</strong></h2>
   <div class="transport-details">
     <div class="transport-item">
-      <h3>📍 <span id="disp-funeralLocation-3">N/A</span></h3>
-      <p><strong>地址：</strong><span id="disp-contactAddress-3">N/A</span></p>
-    </div>
+      <h4>🚌 大眾運輸指引</h4>
+      <div id="disp-transportText"></div> </div>
     <div class="transport-item">
-      <h4>🚍 公車資訊</h4>
-      <p><strong>新海橋頭站：</strong>658、857、橘5</p>
-      <p><strong>新海抽水站：</strong>810、786</p>
-      <p>🧍‍♂️ 步行約 3 分鐘即可到達</p>
-    </div>
-    <div class="transport-item">
+      <h4>🅿️ 停車資訊</h4>
+      <div id="disp-parkingText"></div> </div>
+    <div class="transport-item" style="flex-basis: 100%; text-align: center;">
       <a id="link-map-link-bottom" class="map-link" href="#" target="_blank">
-        ➤ 點我開啟 Google 地圖
+        ➤ 點我開啟 Google 地圖 (導航至 <span id="disp-contactAddress-name-bottom">N/A</span>)
       </a>
     </div>
   </div>
@@ -393,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <h2 class="title">殯儀館導引圖與停車資訊</h2>
     <p class="subtitle">點擊圖片可放大查看</p>
     <div class="image-gallery">
-      <img id="disp-mapImg1" src="" alt="殯儀館資訊" class="gallery-img" loading="lazy">
+      <img id="disp-mapImg1" src="" alt="導引圖" class="gallery-img" loading="lazy">
       <img id="disp-mapImg2" src="" alt="停車地圖" class="gallery-img" loading="lazy">
     </div>
   </div>
@@ -434,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <footer style="background-color: #f3f3f3; padding: 20px 0; text-align: center; font-family: Arial, sans-serif;">
     <div style="max-width: 400px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center; display: flex; align-items: center;">
         <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin-right: 20px;">
-            <img id="disp-responsiblePersonImg" src="" alt="負責人照片" style="width: 100%; height: 100%; object-fit: cover;">
+            <img id="disp-responsiblePersonImg" src="" alt="負責人照片" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
         </div>
         <div style="flex: 1; text-align: left;">
             <div class="company-logo">
@@ -531,7 +529,7 @@ function generateFlowerGallery(codesStr) {
 
 document.addEventListener('DOMContentLoaded', function() {
     // --------------------------------------------------------------------------------
-    // 核心邏輯：從 URL 參數讀取數據 (取代 localStorage)
+    // 核心邏輯：從 URL 參數讀取數據
     // --------------------------------------------------------------------------------
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -544,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 步驟 A: URL 解碼
             const urlDecodedData = decodeURIComponent(encodedData);
             
-            // 步驟 B: Base64 解碼
+            // 步驟 B: Base64 解碼 (使用 atob)
             const jsonStr = atob(urlDecodedData); 
             
             // 步驟 C: JSON 解析
@@ -605,17 +603,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (el && src) el.src = src; 
     };
 
-    // 從地址推導出 Google Map 連結
+    // 從地址推導出 Google Map 連結 (修正連結格式)
     const mapLinkTargetAddress = data.contactAddress || data.funeralLocation;
     const mapLinkBase = mapLinkTargetAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLinkTargetAddress)}` : '#';
 
-    // 處理音樂播放：
-    const audio = document.getElementById('background-music');
+    // 處理音樂播放： (維持原邏輯)
+    const audioEl = document.getElementById('background-music');
     const musicSourceMp3 = document.getElementById('music-source-mp3');
     const musicSourceOgg = document.getElementById('music-source-ogg');
 
     if (data.musicPath && data.musicPath.startsWith('data:audio/')) {
-        // 這是從 URL 傳輸過來的 Base64 音樂
         const mimeType = data.musicPath.split(';')[0].split(':')[1];
         
         if (mimeType.includes('mp3')) {
@@ -628,15 +625,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if(musicSourceMp3) musicSourceMp3.remove(); 
         } else {
             console.warn("上傳的音頻格式無法識別或不支援。");
-            if(audio) audio.remove(); 
+            if(audioEl) audioEl.remove(); 
         }
-        if(audio) audio.load();
+        if(audioEl) audioEl.load();
     } else if (data.musicPath) {
-        // 這是預設路徑 
         if(musicSourceMp3) musicSourceMp3.src = data.musicPath;
-        if(audio) audio.load();
+        if(audioEl) audioEl.load();
     } else {
-        if(audio) audio.remove();
+        if(audioEl) audioEl.remove();
     }
 
 
@@ -644,7 +640,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // A. 數據填充
     // ======================================
     
-    // 圖片（現在能顯示 Base64 數據或舊路徑）
+    // 圖片
     setImgSrc('main-photo', data.deceasedPhoto);
     setImgSrc('paper-obituary', data.obituaryPaper);
     setImgSrc('disp-businessCardImg', data.businessCardImg);
@@ -669,7 +665,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-verticalAddress', data.verticalAddress);
     setContent('disp-verticalAddressDetail', data.verticalAddressDetail);
     
-    setContent('disp-contactAddress-name', data.funeralLocation ? data.funeralLocation.split(' ')[0] : 'N/A');
+    // 如果有 funeralLocation 就用地點名稱，否則用 N/A
+    setContent('disp-contactAddress-name', data.funeralLocation || 'N/A');
     setContent('disp-contactAddress', data.contactAddress);
 
     // 追思與緬懷區
@@ -694,9 +691,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .join('');
     }
 
-    // 交通資訊
-    setContent('disp-funeralLocation-3', data.funeralLocation ? data.funeralLocation.split(' ')[0] : 'N/A');
-    setContent('disp-contactAddress-3', data.contactAddress);
+    // **修正：交通資訊**
+    // 讓換行符號在 div 內正確顯示為換行
+    if (data.transportText) {
+        document.getElementById('disp-transportText').innerHTML = data.transportText
+            .split('\n')
+            .map(p => `<p>${p}</p>`)
+            .join('');
+    }
+    if (data.parkingText) {
+        document.getElementById('disp-parkingText').innerHTML = data.parkingText
+            .split('\n')
+            .map(p => `<p>${p}</p>`)
+            .join('');
+    }
+    setContent('disp-contactAddress-name-bottom', data.funeralLocation || '治喪地點');
 
     // 參加喪禮區
     setContent('disp-funeralDate-full-2', funeralDateInfo.full);
@@ -722,15 +731,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 地圖與地點連結
     if(mapIframeSrc) document.getElementById('google-map-embed').src = mapIframeSrc;
-    setLink('link-verticalAddressDetail', mapLinkBase);
-    setLink('link-contactAddress', mapLinkBase);
-    setLink('link-map-link-bottom', mapLinkBase);
+    // 修正：使用 mapLinkBase 作為 Google Map 導航連結
+    setLink('link-verticalAddressDetail', mapLinkBase, false);
+    setLink('link-contactAddress', mapLinkBase, false);
+    setLink('link-map-link-bottom', mapLinkBase, false);
     
     // LINE 連結
-    setLink('link-lineContactLink-flower', lineLink);
-    setLink('link-fixed-lineContactLink', lineLink);
-    setLink('link-lineContactLink-attend', lineLink);
-    setLink('link-lineContactLink-footer', lineLink);
+    setLink('link-lineContactLink-flower', lineLink, false);
+    setLink('link-fixed-lineContactLink', lineLink, false);
+    setLink('link-lineContactLink-attend', lineLink, false);
+    setLink('link-lineContactLink-footer', lineLink, false);
     
     // 電話連結
     setLink('link-contactPhoneA-2', data.contactPhoneA, true); 
