@@ -2,296 +2,482 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>訃聞數據輸入頁 (URL 編碼版)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訃聞資訊輸入與連結生成器 - 祥安生命</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <style>
-        /* 樣式保持不變 */
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        input[type="file"] { width: 100%; padding: 10px 0; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f9f9f9; }
-        button { display: block; width: 100%; padding: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer; font-size: 1.1em; }
-        button:hover { background-color: #0056b3; }
-        .section { border: 1px solid #ddd; padding: 15px; margin-top: 20px; border-radius: 6px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
-        textarea { resize: vertical; }
-        .hidden-url-box { margin-top: 20px; padding: 15px; background-color: #e6ffe6; border: 1px solid #00c300; border-radius: 4px; display: none; }
-        .hidden-url-box p { font-weight: bold; margin-bottom: 10px; }
-        .url-output { word-break: break-all; background-color: #fff; padding: 10px; border: 1px dashed #009900; border-radius: 4px; cursor: copy; }
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #357AB8;
+            --background-light: #F8F9FA;
+            --text-dark: #333;
+            --border-color: #E0E0E0;
+            --font-family-main: 'Noto Serif TC', serif;
+        }
+
+        body {
+            font-family: var(--font-family-main);
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .section-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            margin: 20px -30px 20px -30px; /* 延伸到容器邊緣 */
+            border-radius: 0;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-align: left;
+            border-left: 8px solid #FFC107; /* 醒目裝飾 */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            padding: 5px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-group > .form-group {
+            flex: 1;
+        }
+
+        /* 檔案/路徑輸入的特殊樣式 */
+        .path-note {
+            font-size: 0.85em;
+            color: #E91E63;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+
+        /* 按鈕樣式 */
+        #generate-url {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 30px;
+            font-weight: 700;
+        }
+
+        #generate-url:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 結果區塊 */
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            background-color: #EAF3FF;
+            text-align: center;
+        }
+
+        #result-url {
+            display: block;
+            word-break: break-all;
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        #copy-button, #jump-button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: opacity 0.3s, background-color 0.3s;
+        }
+
+        #copy-button {
+            background-color: #28A745;
+            color: white;
+        }
+
+        #jump-button {
+            background-color: #FFC107;
+            color: var(--text-dark);
+        }
+
+        #copy-button:hover { background-color: #1E7E34; }
+        #jump-button:hover { background-color: #E0A800; }
+
+        /* 必填標記 */
+        .required::after {
+            content: '*';
+            color: red;
+            margin-left: 5px;
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 600px) {
+            .input-group {
+                flex-direction: column;
+                gap: 0;
+            }
+            .container {
+                padding: 15px;
+            }
+            .section-header {
+                margin: 20px -15px 20px -15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>訃聞內容輸入 (URL 編碼版)</h1>
-        <form id="fubenForm">
-            <div class="section">
-                <h2>亡者資訊</h2>
-                <label for="name">亡者姓名 (例如: 蕭甘月露夫人):</label>
-                <input type="text" id="name" value="蕭甘月露夫人" required>
-                <label for="age">享壽 (虛歲):</label>
-                <input type="number" id="age" value="94" required>
-                <label for="deathDate">辭世日期 (YYYY-MM-DD):</label>
-                <input type="date" id="deathDate" value="2025-11-26" required>
-                <label for="funeralDate">出殯日期 (YYYY-MM-DD):</label>
-                <input type="date" id="funeralDate" value="2025-12-17" required>
-                <label for="deathLunarDate">辭世農曆日期 (例如: 十月廿八日):</label>
-                <input type="text" id="deathLunarDate" value="十月廿八日" required>
-            </div>
 
-            <div class="section">
-                <h2>儀式與地點</h2>
-                <label for="funeralLocation">出殯地點 (例如: 板橋殯儀館 崇仁廳):</label>
-                <input type="text" id="funeralLocation" value="板橋殯儀館 崇仁廳" required>
-                <label for="jiadianTimePhrase">家奠時間 (例如: 上午 七 時 四十分):</label>
-                <input type="text" id="jiadianTimePhrase" value="上午 七 時 四十分" required>
-                <label for="gongdianTimePhrase">公奠時間 (例如: 上午 八 時 五十 分):</label>
-                <input type="text" id="gongdianTimePhrase" value="上午 八 時 五十 分" required>
-                <label for="contactAddress">出殯地點地址 (詳細):</label>
-                <input type="text" id="contactAddress" value="220新北市板橋區中正路560號" required>
-                <label for="verticalAddress">豎靈地點 (例如: 龍華會館 1F牌位區 [ 73號 ]):</label>
-                <input type="text" id="verticalAddress" value="龍華會館 1F牌位區 [ 73號 ]" required>
-                <label for="verticalAddressDetail">豎靈地點地址 (詳細):</label>
-                <input type="text" id="verticalAddressDetail" value="220新北市板橋區長江路一段7號" required>
-            </div>
+<div class="container">
+    <h1>雲端訃聞生成工具</h1>
+    <p style="text-align: center; color: #E91E63; font-weight: 700;">
+        ⚠️ **重要提醒：所有圖片/音訊欄位請填寫伺服器上的** **路徑或完整網址** **，而非上傳 Base64 數據。**
+    </p>
 
-            <div class="section">
-                <h2>聯絡人、禮儀師與連結</h2>
-                <div class="grid-2">
-                    <div>
-                        <label for="contactNameA">家屬聯絡人姓名 (例如: 志順):</label>
-                        <input type="text" id="contactNameA" value="志順" required>
-                        <label for="contactPhoneA">家屬聯絡人電話 (ex: 0953-825-426):</label>
-                        <input type="text" id="contactPhoneA" value="0953-825-426" required>
-                    </div>
-                    <div>
-                        <label for="musician">禮儀師姓名:</label>
-                        <input type="text" id="musician" value="陳柏元" required>
-                        <label for="musicianPhone">禮儀師電話 (24小時專線 ex: 0938-179-858):</label>
-                        <input type="text" id="musicianPhone" value="0938-179-858" required>
-                    </div>
-                </div>
-                <label for="mapIframeLink">Google Maps 嵌入連結 (iframe src):</label>
-                <textarea id="mapIframeLink" rows="3" required>https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.115456956247!2d121.4552458!3d25.0300185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a8b98f24458f%3A0x6a2c22e4d0c28340!2z6Ie65q-C56u55LiA6IK-5b-g!5e0!3m2!1szh-TW!2stw!4v1703031070213!5m2!1szh-TW!2stw</textarea>
-                <label for="lineContactLink">LINE 聯絡連結:</label>
-                <input type="text" id="lineContactLink" value="https://line.me/ti/p/nZJmE8-b6X" required>
-            </div>
-            
-            <div class="section">
-                <h2>圖片與媒體上傳 (❗請點擊上傳檔案❗)</h2>
-                
-                <label for="deceasedPhotoFile">亡者追思照片 (上傳檔案):</label>
-                <input type="file" id="deceasedPhotoFile" accept="image/*">
-                <input type="hidden" id="deceasedPhoto" value="image/IMG_3696.jpeg">
-
-                <label for="obituaryPaperFile">訃聞紙本照片 (上傳檔案):</label>
-                <input type="file" id="obituaryPaperFile" accept="image/*">
-                <input type="hidden" id="obituaryPaper" value="image/IMG_4092.jpeg">
-
-                <label for="businessCardImgFile">禮儀公司名片 (上傳檔案):</label>
-                <input type="file" id="businessCardImgFile" accept="image/*">
-                <input type="hidden" id="businessCardImg" value="image/未命名設計.png">
-
-                <label for="responsiblePersonImgFile">負責人/禮儀師照片 (上傳檔案):</label>
-                <input type="file" id="responsiblePersonImgFile" accept="image/*">
-                <input type="hidden" id="responsiblePersonImg" value="image/IMG_8349.jpeg">
-
-                <label for="mapImg1File">交通資訊圖 1 (上傳檔案):</label>
-                <input type="file" id="mapImg1File" accept="image/*">
-                <input type="hidden" id="mapImg1" value="image/IMG_6325.png">
-
-                <label for="mapImg2File">交通資訊圖 2 (上傳檔案):</label>
-                <input type="file" id="mapImg2File" accept="image/*">
-                <input type="hidden" id="mapImg2" value="image/祥安資訊-板殯.png">
-                
-                <label for="musicFile">背景音樂 (MP3/OGG):</label>
-                <input type="file" id="musicFile" accept="audio/mp3, audio/ogg">
-            </div>
-
-            <div class="section">
-                <h2>花籃訂購與自訂文字</h2>
-                <label for="unifiedFlower">是否採統一製作花籃?</label>
-                <select id="unifiedFlower" required>
-                    <option value="是">是 (統一製作，不接受外部花禮)</option>
-                    <option value="否" selected>否 (開放選擇樣式)</option>
-                </select>
-                <label>可供選擇的花籃樣式代碼 (例如: A,B,C,D,E,F,G,H, 用逗號分隔):</label>
-                <input type="text" id="flowerStylesCodes" value="A,B,C,D,E,F,G,H">
-                <label for="obituaryThanks">感謝親友自訂文字 (可用換行分隔段落):</label>
-                <textarea id="obituaryThanks" rows="5">感謝親友們在這段時間的慰問與關心
-您的關懷和鼓勵
-陪伴我們度過了這段艱難的時光
-敬邀您
-與我們一同追思懷念[亡者姓名]
-並向您獻上最深的敬意
-謝謝您！</textarea>
-                <label for="footerCompanyName">頁腳公司名稱:</label>
-                <input type="text" id="footerCompanyName" value="祥安生命有限公司">
-            </div>
-
-            <button type="submit">生成獨立網址與跳轉</button>
-        </form>
-
-        <div id="result-box" class="hidden-url-box">
-            <p>✅ **請複製以下連結，這個就是家屬專屬的訃聞網址：**</p>
-            <div id="generated-url" class="url-output"></div>
-            <p style="margin-top: 10px;">(點擊網址即可複製)</p>
-            <button id="copy-and-go-btn" style="background-color: #28a745; margin-top: 10px;">點擊複製並開啟訃聞</button>
+    <h2 class="section-header">🕊️ 基本資料與日期</h2>
+    <div class="input-group">
+        <div class="form-group">
+            <label for="name" class="required">亡者姓名</label>
+            <input type="text" id="name" placeholder="王小明" required>
+        </div>
+        <div class="form-group">
+            <label for="age" class="required">享年 (歲)</label>
+            <input type="text" id="age" placeholder="88" required>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="form-group">
+            <label for="deathDate" class="required">辭世日期 (國曆)</label>
+            <input type="date" id="deathDate" value="2025-01-01" required>
+        </div>
+        <div class="form-group">
+            <label for="deathLunarDate">辭世日期 (農曆/輔助顯示)</label>
+            <input type="text" id="deathLunarDate" placeholder="甲辰年十二月初二">
+        </div>
+    </div>
+    
+    <h2 class="section-header">🗓️ 告別式資訊</h2>
+    <div class="form-group">
+        <label for="funeralDate" class="required">告別式/出殯日期 (國曆)</label>
+        <input type="date" id="funeralDate" value="2025-01-15" required>
+    </div>
+    <div class="input-group">
+        <div class="form-group">
+            <label for="jiadianTimePhrase" class="required">家奠時間 (例如：上午 08:30)</label>
+            <input type="text" id="jiadianTimePhrase" placeholder="上午 08:30" required>
+        </div>
+        <div class="form-group">
+            <label for="gongdianTimePhrase" class="required">公奠時間 (例如：上午 09:00)</label>
+            <input type="text" id="gongdianTimePhrase" placeholder="上午 09:00" required>
         </div>
     </div>
 
-    <script>
-    // --- 輔助函式：取得檔案輸入 ---
-    function getFile(id) {
-        const fileInput = document.getElementById(id);
-        return fileInput.files[0];
-    }
-    
-    // --- 媒體檔案 ID 列表 ---
-    const mediaFileIds = [
-        'deceasedPhotoFile', 'obituaryPaperFile', 'businessCardImgFile', 
-        'responsiblePersonImgFile', 'mapImg1File', 'mapImg2File', 'musicFile'
-    ];
-    
-    // --- 表單提交處理 ---
-    document.getElementById('fubenForm').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        
-        // ----------------------------------------------------
-        // 1. 處理所有媒體檔案 (圖片和音樂) 為 Base64 字串
-        // ----------------------------------------------------
-        
-        const data = {};
-        const filesToProcess = mediaFileIds.filter(id => getFile(id));
-        let processedCount = 0;
-        
-        // 收集所有文字數據
-        data.name = document.getElementById('name').value;
-        data.age = document.getElementById('age').value;
-        data.deathDate = document.getElementById('deathDate').value;
-        data.funeralDate = document.getElementById('funeralDate').value;
-        data.deathLunarDate = document.getElementById('deathLunarDate').value;
-        data.funeralLocation = document.getElementById('funeralLocation').value;
-        data.jiadianTimePhrase = document.getElementById('jiadianTimePhrase').value;
-        data.gongdianTimePhrase = document.getElementById('gongdianTimePhrase').value;
-        data.contactAddress = document.getElementById('contactAddress').value;
-        data.verticalAddress = document.getElementById('verticalAddress').value;
-        data.verticalAddressDetail = document.getElementById('verticalAddressDetail').value;
-        data.contactNameA = document.getElementById('contactNameA').value;
-        data.contactPhoneA = document.getElementById('contactPhoneA').value;
-        data.musician = document.getElementById('musician').value;
-        data.musicianPhone = document.getElementById('musicianPhone').value;
-        data.mapIframeLink = document.getElementById('mapIframeLink').value;
-        data.lineContactLink = document.getElementById('lineContactLink').value;
-        data.unifiedFlower = document.getElementById('unifiedFlower').value;
-        data.flowerStylesCodes = document.getElementById('flowerStylesCodes').value;
-        data.obituaryThanks = document.getElementById('obituaryThanks').value;
-        data.footerCompanyName = document.getElementById('footerCompanyName').value;
+    <h2 class="section-header">📍 地點與聯絡人</h2>
+    <div class="form-group">
+        <label for="verticalAddress">豎靈地點名稱 (例：新北板橋殯儀館)</label>
+        <input type="text" id="verticalAddress" placeholder="新北板橋殯儀館">
+    </div>
+    <div class="form-group">
+        <label for="verticalAddressDetail">豎靈地址 (Google 地圖用)</label>
+        <input type="text" id="verticalAddressDetail" placeholder="新北市板橋區新海路135號">
+    </div>
+    <div class="form-group">
+        <label for="funeralLocation" class="required">告別式地點名稱 (例：新北板橋殯儀館-景福廳)</label>
+        <input type="text" id="funeralLocation" placeholder="新北板橋殯儀館-景福廳" required>
+    </div>
+    <div class="form-group">
+        <label for="contactAddress" class="required">治喪地址/出殯地址 (Google 地圖用)</label>
+        <input type="text" id="contactAddress" placeholder="新北市板橋區新海路135號" required>
+    </div>
+    <div class="form-group">
+        <label for="mapIframeLink">Google Map 內嵌 iframe 連結</label>
+        <input type="text" id="mapIframeLink" placeholder="例如：<iframe src='...'> 裡面的 src 內容">
+    </div>
 
-        // 處理沒有檔案上傳的情況
-        if (filesToProcess.length === 0) {
-            // 使用預設路徑 (隱藏欄位值)
-            data.deceasedPhoto = document.getElementById('deceasedPhoto').value;
-            data.obituaryPaper = document.getElementById('obituaryPaper').value;
-            data.businessCardImg = document.getElementById('businessCardImg').value;
-            data.responsiblePersonImg = document.getElementById('responsiblePersonImg').value;
-            data.mapImg1 = document.getElementById('mapImg1').value;
-            data.mapImg2 = document.getElementById('mapImg2').value;
-            data.musicPath = ''; 
+    <div class="input-group">
+        <div class="form-group">
+            <label for="musician" class="required">禮儀師姓名</label>
+            <input type="text" id="musician" placeholder="陳大安" required>
+        </div>
+        <div class="form-group">
+            <label for="musicianPhone" class="required">禮儀師電話</label>
+            <input type="text" id="musicianPhone" placeholder="09XX-XXX-XXX" required>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="form-group">
+            <label for="contactNameA">家屬聯絡人姓名</label>
+            <input type="text" id="contactNameA" placeholder="王大明">
+        </div>
+        <div class="form-group">
+            <label for="contactPhoneA">家屬聯絡人電話</label>
+            <input type="text" id="contactPhoneA" placeholder="09XX-XXX-XXX">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="lineContactLink" class="required">LINE 聯絡網址</label>
+        <input type="text" id="lineContactLink" placeholder="例如：https://line.me/ti/p/~@LINEID" required>
+    </div>
+
+    <h2 class="section-header">🖼️ 圖片與政策 (請填寫**路徑**或**網址**)</h2>
+    <div class="form-group">
+        <label for="deceasedPhoto">亡者追思照片路徑</label>
+        <input type="text" id="deceasedPhoto" placeholder="例如：image/deceased/Wang.jpg">
+        <p class="path-note">請確認檔案已上傳至伺服器。</p>
+    </div>
+    <div class="form-group">
+        <label for="obituaryPaper">訃告紙本路徑 (點擊放大圖)</label>
+        <input type="text" id="obituaryPaper" placeholder="例如：image/paper/paper_final.png">
+        <p class="path-note">請確認檔案已上傳至伺服器。</p>
+    </div>
+    <div class="form-group">
+        <label for="musicPath">背景音樂路徑 (.mp3 或 .ogg)</label>
+        <input type="text" id="musicPath" placeholder="例如：audio/peace.mp3">
+        <p class="path-note">請確認檔案已上傳至伺服器。</p>
+    </div>
+    <div class="form-group">
+        <label for="unifiedFlower">花籃政策</label>
+        <select id="unifiedFlower">
+            <option value="否">開放自由致贈花籃</option>
+            <option value="是">統一製作花籃 (不開放自行訂購)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="flowerStylesCodes">花籃樣式代碼 (英文大寫, 逗號分隔)</label>
+        <input type="text" id="flowerStylesCodes" placeholder="例如：A, B, C, F, H">
+    </div>
+
+    <h2 class="section-header">📝 選填輔助資料</h2>
+    <div class="form-group">
+        <label for="obituaryThanks">訃告結尾感謝詞 (每行一句，會自動換段)</label>
+        <textarea id="obituaryThanks" placeholder="治喪期間，諸多不便，敬請諒解。
+衷心感謝親友的慰問與陪伴，家人們銘記在心。"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="businessCardImg">公司名片/QR Code 圖片路徑</label>
+        <input type="text" id="businessCardImg" placeholder="例如：image/card/business.png">
+    </div>
+    <div class="form-group">
+        <label for="responsiblePersonImg">禮儀師/負責人照片路徑 (頁腳)</label>
+        <input type="text" id="responsiblePersonImg" placeholder="例如：image/staff/musician.jpg">
+    </div>
+    <div class="form-group">
+        <label for="footerCompanyName">禮儀公司名稱 (頁腳)</label>
+        <input type="text" id="footerCompanyName" placeholder="祥安生命禮儀有限公司">
+    </div>
+    <div class="input-group">
+        <div class="form-group">
+            <label for="mapImg1">導引圖圖片路徑</label>
+            <input type="text" id="mapImg1" placeholder="例如：image/transport/guide1.jpg">
+        </div>
+        <div class="form-group">
+            <label for="mapImg2">停車資訊圖片路徑</label>
+            <input type="text" id="mapImg2" placeholder="例如：image/transport/park2.jpg">
+        </div>
+    </div>
+
+
+    <button id="generate-url">🚀 生成獨立網址與跳轉</button>
+
+    <div class="result-box" style="display: none;">
+        <h3>🔗 訃聞連結已生成</h3>
+        <span id="result-url"></span>
+        <div>
+            <button id="copy-button">📋 複製連結</button>
+            <button id="jump-button">🌐 開啟訃聞頁面</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('generate-url');
+    const resultUrlSpan = document.getElementById('result-url');
+    const resultBox = document.querySelector('.result-box');
+    const copyBtn = document.getElementById('copy-button');
+    const jumpBtn = document.getElementById('jump-button');
+    
+    // 預設填入範例路徑
+    document.getElementById('deceasedPhoto').value = "image/deceased/sample.jpg";
+    document.getElementById('obituaryPaper').value = "image/paper/sample_paper.png";
+    document.getElementById('musicPath').value = "audio/default_bgm.mp3";
+    document.getElementById('businessCardImg').value = "image/card/sample_card.png";
+    document.getElementById('responsiblePersonImg').value = "image/staff/sample_person.jpg";
+    document.getElementById('footerCompanyName').value = "祥安生命禮儀有限公司";
+    document.getElementById('mapImg1').value = "image/transport/sample_guide1.jpg";
+    document.getElementById('mapImg2').value = "image/transport/sample_park2.jpg";
+
+
+    // 核心編碼邏輯函式
+    // 這裡我們將編碼邏輯混淆在一個匿名函式中，名稱和參數都是簡寫，稍微增加閱讀難度。
+    const CORE_ENCODER_LOGIC = function(d) {
+        let j, b, u, base_url;
+        try {
+            // 1. JSON 序列化
+            j = JSON.stringify(d);
             
-            generateUrlAndDisplay(data);
+            // 2. Base64 編碼
+            // 核心保護：將 Base64 邏輯包裝起來。
+            b = window.btoa(unescape(encodeURIComponent(j)));
+            
+            // 3. URL 編碼 (對 Base64 結果進行編碼)
+            u = encodeURIComponent(b);
+            
+            // 4. 構建 URL
+            base_url = 'fuben_display.html';
+            return base_url + '?data=' + u;
+        } catch (e) {
+            console.error("生成連結失敗:", e);
+            alert("生成連結失敗，請檢查輸入數據是否包含無效字符。");
+            return null;
+        }
+    };
+    
+    // 按鈕事件處理
+    generateBtn.addEventListener('click', function() {
+        const data = {
+            // 亡者與日期
+            name: document.getElementById('name').value.trim(),
+            age: document.getElementById('age').value.trim(),
+            deathDate: document.getElementById('deathDate').value,
+            deathLunarDate: document.getElementById('deathLunarDate').value.trim(),
+            
+            // 喪禮資訊
+            funeralDate: document.getElementById('funeralDate').value,
+            jiadianTimePhrase: document.getElementById('jiadianTimePhrase').value.trim(),
+            gongdianTimePhrase: document.getElementById('gongdianTimePhrase').value.trim(),
+            
+            // 地點與聯絡人
+            verticalAddress: document.getElementById('verticalAddress').value.trim(),
+            verticalAddressDetail: document.getElementById('verticalAddressDetail').value.trim(),
+            funeralLocation: document.getElementById('funeralLocation').value.trim(),
+            contactAddress: document.getElementById('contactAddress').value.trim(),
+            mapIframeLink: document.getElementById('mapIframeLink').value.trim(),
+
+            musician: document.getElementById('musician').value.trim(),
+            musicianPhone: document.getElementById('musicianPhone').value.trim(),
+            contactNameA: document.getElementById('contactNameA').value.trim(),
+            contactPhoneA: document.getElementById('contactPhoneA').value.trim(),
+            lineContactLink: document.getElementById('lineContactLink').value.trim(),
+            
+            // 圖片與政策 (只傳輸路徑/URL，避免長度問題)
+            deceasedPhoto: document.getElementById('deceasedPhoto').value.trim(),
+            obituaryPaper: document.getElementById('obituaryPaper').value.trim(),
+            musicPath: document.getElementById('musicPath').value.trim(),
+            unifiedFlower: document.getElementById('unifiedFlower').value,
+            flowerStylesCodes: document.getElementById('flowerStylesCodes').value.trim(),
+
+            // 選填輔助資料
+            obituaryThanks: document.getElementById('obituaryThanks').value.trim(),
+            businessCardImg: document.getElementById('businessCardImg').value.trim(),
+            responsiblePersonImg: document.getElementById('responsiblePersonImg').value.trim(),
+            footerCompanyName: document.getElementById('footerCompanyName').value.trim(),
+            mapImg1: document.getElementById('mapImg1').value.trim(),
+            mapImg2: document.getElementById('mapImg2').value.trim(),
+        };
+
+        // 檢查必填欄位
+        if (!data.name || !data.age || !data.deathDate || !data.funeralDate || !data.jiadianTimePhrase || !data.gongdianTimePhrase || !data.funeralLocation || !data.contactAddress || !data.musician || !data.musicianPhone || !data.lineContactLink) {
+            alert("請填寫所有標記為 * 的必填欄位！");
             return;
         }
+        
+        // 使用混淆過的編碼邏輯
+        const finalUrl = CORE_ENCODER_LOGIC(data);
 
-        // 處理檔案上傳
-        filesToProcess.forEach(fileId => {
-            const file = getFile(fileId);
-            const dataKey = fileId.replace('File', '').replace('Photo', ''); 
+        if (finalUrl) {
+            resultUrlSpan.textContent = window.location.origin + window.location.pathname.replace('index.html', '') + finalUrl;
+            resultBox.style.display = 'block';
             
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                data[dataKey] = event.target.result; // Base64 字串
-                processedCount++;
-                
-                // 檢查所有檔案是否都已處理完成
-                if (processedCount === filesToProcess.length) {
-                    
-                    // 處理未上傳的圖片：使用預設路徑
-                    if (!data.deceased) data.deceasedPhoto = document.getElementById('deceasedPhoto').value;
-                    else data.deceasedPhoto = data.deceased;
-
-                    if (!data.obituaryPaper) data.obituaryPaper = document.getElementById('obituaryPaper').value;
-                    if (!data.businessCardImg) data.businessCardImg = document.getElementById('businessCardImg').value;
-                    if (!data.responsiblePersonImg) data.responsiblePersonImg = document.getElementById('responsiblePersonImg').value;
-                    if (!data.mapImg1) data.mapImg1 = document.getElementById('mapImg1').value;
-                    if (!data.mapImg2) data.mapImg2 = document.getElementById('mapImg2').value;
-                    
-                    if (!data.music) data.musicPath = ''; 
-                    else data.musicPath = data.music; // 將 music Base64 賦值給 musicPath
-
-                    // 刪除臨時的 key
-                    delete data.deceased;
-                    delete data.music;
-                    
-                    generateUrlAndDisplay(data);
-                }
+            // 綁定跳轉按鈕事件
+            jumpBtn.onclick = function() {
+                window.open(finalUrl, '_blank');
             };
-            reader.onerror = function(error) {
-                console.error(`讀取檔案 ${fileId} 失敗:`, error);
-                // 如果失敗，則使用預設路徑
-                const defaultKey = fileId.replace('File', '');
-                data[defaultKey] = document.getElementById(defaultKey).value;
-                
-                processedCount++;
-                if (processedCount === filesToProcess.length) {
-                    generateUrlAndDisplay(data);
-                }
-            };
-            
-            reader.readAsDataURL(file); 
-        });
+        }
     });
 
-    // ----------------------------------------------------
-    // 2. 核心邏輯：生成 URL
-    // ----------------------------------------------------
-    function generateUrlAndDisplay(data) {
-        try {
-            // 步驟 A: 將 JavaScript 物件轉換為 JSON 字串
-            const jsonStr = JSON.stringify(data);
-            
-            // 步驟 B: 使用 Base64 編碼，然後再進行 URL 編碼 (確保安全性)
-            const base64Str = btoa(jsonStr); // Base64 編碼
-            const urlEncodedData = encodeURIComponent(base64Str); // URL 編碼
-            
-            // 步驟 C: 構造最終的獨立網址
-            const baseUrl = window.location.href.replace('index.html', 'fuben_display.html');
-            const finalUrl = `${baseUrl}?data=${urlEncodedData}`;
-            
-            // 步驟 D: 顯示給使用者
-            const urlOutputDiv = document.getElementById('generated-url');
-            urlOutputDiv.textContent = finalUrl;
-            document.getElementById('result-box').style.display = 'block';
-            
-            // 綁定複製事件
-            urlOutputDiv.onclick = function() {
-                navigator.clipboard.writeText(finalUrl).then(() => {
-                    alert('訃聞網址已複製到剪貼簿！');
-                });
-            };
+    // 複製按鈕事件
+    copyBtn.addEventListener('click', function() {
+        const urlToCopy = resultUrlSpan.textContent;
+        navigator.clipboard.writeText(urlToCopy).then(() => {
+            alert("連結已成功複製到剪貼板！");
+        }).catch(err => {
+            console.error('複製失敗:', err);
+            alert("複製失敗，請手動選取複製。");
+        });
+    });
+});
+</script>
 
-            // 綁定複製並開啟按鈕
-            document.getElementById('copy-and-go-btn').onclick = function() {
-                 navigator.clipboard.writeText(finalUrl).then(() => {
-                    window.location.href = finalUrl; 
-                 });
-            };
-            
-        } catch (e) {
-            console.error("網址生成失敗，資料可能過長：", e);
-            alert("網址生成失敗，可能因 Base64 數據過長超出瀏覽器極限。請嘗試使用較小的圖片。");
-        }
-    }
-    </script>
 </body>
 </html>
