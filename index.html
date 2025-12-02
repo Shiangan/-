@@ -243,6 +243,18 @@
     </div>
 
     <h2 class="section-header">📍 地點與聯絡人</h2>
+    
+    <div class="form-group">
+        <label for="locationPreset" class="required">主要地點預設選擇</label>
+        <select id="locationPreset" onchange="autoFillLocation()" required>
+            <option value="">請選擇一個主要地點 (自動填寫地址)</option>
+            <option value="banqiao">新北板橋殯儀館</option>
+            <option value="sec_taipei">台北市第二殯儀館 (二殯)</option>
+            <option value="taoyuan">桃園市殯葬園區</option>
+            <option value="zhongli">中壢御殿園</option>
+            <option value="custom">自訂地點 (手動輸入)</option>
+        </select>
+    </div>
     <div class="form-group">
         <label for="verticalAddress">豎靈地點名稱 (例：新北板橋殯儀館)</label>
         <input type="text" id="verticalAddress" placeholder="新北板橋殯儀館">
@@ -367,19 +379,96 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyBtn = document.getElementById('copy-button');
     const jumpBtn = document.getElementById('jump-button');
     
-    // 預設填入範例路徑
+    // --- 地點資料庫 ---
+    const LOCATION_DATA = {
+        banqiao: {
+            verticalAddress: "新北板橋殯儀館",
+            address: "新北市板橋區新海路135號",
+            funeralLocationDefault: "新北板橋殯儀館 - 景福廳",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.1189901763784!2d121.4646061150041!3d25.03058858397359!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a81831c19815%3A0x1d58d9279a02476b!2z5paw6Jyc5pyD5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256037000!5m2!1szh-TW!2stw",
+            thanks: "治喪期間，諸多不便，敬請諒解。\n板橋殯儀館交通繁忙，建議搭乘大眾運輸或共乘。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "image/transport/banqiao_guide.jpg", // 假設您有對應的交通圖
+            mapImg2: "image/transport/banqiao_park.jpg"
+        },
+        sec_taipei: {
+            verticalAddress: "台北市第二殯儀館",
+            address: "臺北市大安區辛亥路三段330號",
+            funeralLocationDefault: "臺北市第二殯儀館 - 景仰廳",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.426294717144!2d121.54581291500392!3d25.01977798398188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a9b340000001%3A0x6b8f38d38e0787d5!2z5Y-w5Lit5ZyL5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256111000!5m2!1szh-TW!2stw",
+            thanks: "治喪期間，諸多不便，敬請諒解。\n二殯周邊停車不易，建議多利用接駁服務或計程車。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "image/transport/erbin_guide.jpg",
+            mapImg2: "image/transport/erbin_park.jpg"
+        },
+        taoyuan: {
+            verticalAddress: "桃園市殯葬園區",
+            address: "桃園市桃園區大有路896號",
+            funeralLocationDefault: "桃園市殯葬園區 - 懷德廳",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.0645607370884!2d121.32833071500585!3d25.10901518390885!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34682029b35a396b%3A0x1d752c1e7a030001!2z5qGM6YCH5biC576p5oqW5pqX5oKs5biC!5e0!3m2!1szh-TW!2stw!4v1678256165000!5m2!1szh-TW!2stw",
+            thanks: "治喪期間，諸多不便，敬請諒解。\n桃園殯葬園區路途較遠，請預留充裕時間。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "image/transport/taoyuan_guide.jpg",
+            mapImg2: "image/transport/taoyuan_park.jpg"
+        },
+        zhongli: {
+            verticalAddress: "中壢御殿園",
+            address: "桃園市中壢區培英路356號",
+            funeralLocationDefault: "中壢御殿園 - A廳",
+            mapIframeLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.88219468087!2d121.24434971500516!3d25.08053608393527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3468233f2c5d1791%3A0xf5c9b74070a72c1e!2z5Lit5bGl5Zub5a6u5ZyL!5e0!3m2!1szh-TW!2stw!4v1678256220000!5m2!1szh-TW!2stw",
+            thanks: "治喪期間，諸多不便，敬請諒解。\n御殿園位置相對偏僻，建議使用導航。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "image/transport/zhongli_guide.jpg",
+            mapImg2: "image/transport/zhongli_park.jpg"
+        },
+        custom: {
+            verticalAddress: "",
+            address: "",
+            funeralLocationDefault: "",
+            mapIframeLink: "",
+            thanks: "治喪期間，諸多不便，敬請諒解。\n衷心感謝親友的慰問與陪伴，家人們銘記在心。",
+            mapImg1: "",
+            mapImg2: ""
+        }
+    };
+    // ----------------------
+    
+    // 預設填入範例路徑 (未被地點資料庫覆蓋的欄位)
     document.getElementById('deceasedPhoto').value = "image/deceased/sample.jpg";
     document.getElementById('obituaryPaper').value = "image/paper/sample_paper.png";
     document.getElementById('musicPath').value = "audio/default_bgm.mp3";
     document.getElementById('businessCardImg').value = "image/card/sample_card.png";
     document.getElementById('responsiblePersonImg').value = "image/staff/sample_person.jpg";
     document.getElementById('footerCompanyName').value = "祥安生命禮儀有限公司";
-    document.getElementById('mapImg1').value = "image/transport/sample_guide1.jpg";
-    document.getElementById('mapImg2').value = "image/transport/sample_park2.jpg";
 
+    /**
+     * 根據選擇的地點自動填寫相關資訊
+     */
+    window.autoFillLocation = function() {
+        const selectedKey = document.getElementById('locationPreset').value;
+        const data = LOCATION_DATA[selectedKey];
 
-    // 核心編碼邏輯函式
-    // 這裡我們將編碼邏輯混淆在一個匿名函式中，名稱和參數都是簡寫，稍微增加閱讀難度。
+        if (data) {
+            // 自動填寫核心地址資訊
+            document.getElementById('verticalAddress').value = data.verticalAddress;
+            document.getElementById('verticalAddressDetail').value = data.address;
+            document.getElementById('contactAddress').value = data.address;
+            document.getElementById('funeralLocation').value = data.funeralLocationDefault;
+            document.getElementById('mapIframeLink').value = data.mapIframeLink;
+            
+            // 自動填寫結尾感謝詞與交通圖路徑
+            document.getElementById('obituaryThanks').value = data.thanks;
+            document.getElementById('mapImg1').value = data.mapImg1;
+            document.getElementById('mapImg2').value = data.mapImg2;
+            
+            // 如果是自訂，清除所有輸入欄位以利手動輸入
+            if (selectedKey === 'custom') {
+                 document.getElementById('verticalAddress').value = "";
+                 document.getElementById('verticalAddressDetail').value = "";
+                 document.getElementById('contactAddress').value = "";
+                 document.getElementById('funeralLocation').value = "";
+                 document.getElementById('mapIframeLink').value = "";
+            }
+        }
+    };
+    
+    // 核心編碼邏輯函式 (保持混淆以防複製)
     const CORE_ENCODER_LOGIC = function(d) {
         let j, b, u, base_url;
         try {
@@ -405,6 +494,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 按鈕事件處理
     generateBtn.addEventListener('click', function() {
+        // --- 檢查必填欄位 ---
+        const requiredFields = [
+            'name', 'age', 'deathDate', 'funeralDate', 'jiadianTimePhrase', 
+            'gongdianTimePhrase', 'funeralLocation', 'contactAddress', 
+            'musician', 'musicianPhone', 'lineContactLink'
+        ];
+        
+        for (const fieldId of requiredFields) {
+            if (!document.getElementById(fieldId).value.trim()) {
+                alert("請填寫所有標記為 * 的必填欄位！");
+                document.getElementById(fieldId).focus();
+                return;
+            }
+        }
+        // ------------------
+
+
         const data = {
             // 亡者與日期
             name: document.getElementById('name').value.trim(),
@@ -445,22 +551,18 @@ document.addEventListener('DOMContentLoaded', function() {
             mapImg1: document.getElementById('mapImg1').value.trim(),
             mapImg2: document.getElementById('mapImg2').value.trim(),
         };
-
-        // 檢查必填欄位
-        if (!data.name || !data.age || !data.deathDate || !data.funeralDate || !data.jiadianTimePhrase || !data.gongdianTimePhrase || !data.funeralLocation || !data.contactAddress || !data.musician || !data.musicianPhone || !data.lineContactLink) {
-            alert("請填寫所有標記為 * 的必填欄位！");
-            return;
-        }
         
         // 使用混淆過的編碼邏輯
         const finalUrl = CORE_ENCODER_LOGIC(data);
 
         if (finalUrl) {
+            // 顯示完整的網址 (包括目前的協定和域名)
             resultUrlSpan.textContent = window.location.origin + window.location.pathname.replace('index.html', '') + finalUrl;
             resultBox.style.display = 'block';
             
             // 綁定跳轉按鈕事件
             jumpBtn.onclick = function() {
+                // 直接使用相對路徑 URL 跳轉
                 window.open(finalUrl, '_blank');
             };
         }
