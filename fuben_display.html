@@ -2,348 +2,834 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="雲端訃告公告，追思會信息、聯絡方式和致贈花籃選項。">
+    <meta name="keywords" content="訃告, 追思會, 致贈花籃, 致意">
+    <meta property="og:locale" content="zh_TW">
+    <meta name="author" content="祥安生命">
+    <link rel="icon" href="image/logo.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【數位訃聞】追思故 王尚君 女士</title>
-    <style>
-        /* Base Styles */
-        body { 
-            font-family: 'Noto Sans TC', '微軟正黑體', Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #f0f0f0; 
-            color: #333;
-            line-height: 1.6;
-        }
-        .fuben-container {
-            max-width: 650px;
-            margin: 20px auto;
-            background: white;
-            padding: 0 30px 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        /* Header & Deceased Info */
-        .header {
-            text-align: center;
-            padding: 30px 0 20px;
-            border-bottom: 3px solid #e0e0e0;
-        }
-        .header h1 {
-            font-size: 2.2em;
-            color: #444;
-            margin-bottom: 5px;
-        }
-        .header p {
-            margin: 0;
-            font-size: 1.1em;
-            color: #666;
-        }
-        .photo-section {
-            text-align: center;
-            padding: 20px 0;
-        }
-        #deceasedPhotoDisplay {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Content Sections */
-        .content-section {
-            margin-top: 30px;
-            padding: 15px 0;
-            border-bottom: 1px dashed #ccc;
-        }
-        .content-section:last-child {
-            border-bottom: none;
-        }
-        .content-section h2 {
-            font-size: 1.4em;
-            color: #795548; /* 棕色調 */
-            border-left: 5px solid #795548;
-            padding-left: 10px;
-            margin-bottom: 15px;
-        }
-        .detail-item {
-            display: flex;
-            margin-bottom: 10px;
-        }
-        .detail-item strong {
-            flex-basis: 120px;
-            font-weight: bold;
-            color: #555;
-            flex-shrink: 0;
-        }
-        .detail-item span {
-            flex-grow: 1;
-        }
-        .ashes-detail {
-            white-space: pre-wrap; /* 處理換行 */
-        }
-        
-        /* Action Buttons & Footer */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 3px solid #e0e0e0;
-        }
-        .action-buttons a, .action-buttons button {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 1.1em;
-            transition: background-color 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-        .action-buttons .flower-btn {
-            background-color: #4CAF50; /* 綠色 */
-            color: white;
-        }
-        .action-buttons .flower-btn:hover {
-            background-color: #45a049;
-        }
-        .action-buttons .contact-btn {
-            background-color: #2196F3; /* 藍色 */
-            color: white;
-        }
-        .action-buttons .contact-btn:hover {
-            background-color: #0b7dda;
-        }
-
-        .responsible-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        .responsible-info img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-        .responsible-info p {
-            margin: 0;
-            font-size: 0.9em;
-            color: #888;
-        }
-        .paper-link, .card-link {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .paper-link a, .card-link a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 0.95em;
-        }
-
-        /* Audio Player */
-        #musicPlayer {
-            display: none; /* 預設隱藏，若有音樂再顯示 */
-            width: 100%;
-            margin-top: 20px;
-        }
-    </style>
+    <meta property="og:title" content="雲端訃告-祥安">
+    <meta property="og:description" content="追思訃告,衷心感謝親友的慰問與陪伴,治喪期間,以電子追思訊息,邀請您一同參與人生畢業典禮">
+    <meta property="og:image" content="https://24hour.xn--kpry57d/image/Write.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://24hour.台灣/">
+    <meta property="og:type" content="website">
+    <title id="page-title">訃聞公告</title>
+    
+    <link rel="stylesheet" href="obituary.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="fuben-container">
-        <audio id="musicPlayer" controls loop></audio>
 
-        <div class="header">
-            <p><strong>【數位訃聞】</strong></p>
-            <h1>追思故 <span id="deceasedName">亡者姓名</span> <span id="deceasedGenderTitle">女士</span></h1>
-            <p>享壽 <span id="deceasedAge">虛歲</span> 歲</p>
-        </div>
+<audio id="background-music" autoplay muted loop playsinline preload="auto">
+  <source id="music-source-mp3" src="" type="audio/mp3">
+  <source id="music-source-ogg" src="" type="audio/ogg">
+  您的瀏覽器不支援音訊播放。
+</audio>
 
-        <div class="photo-section">
-            <img id="deceasedPhotoDisplay" src="default_photo.jpg" alt="亡者追思照片">
-        </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const audio = document.getElementById('background-music');
+
+    // 嘗試自動播放
+    audio.play().catch(() => {});
+
+    // 還原播放進度
+    const savedTime = localStorage.getItem('audioCurrentTime');
+    if (savedTime) audio.currentTime = parseFloat(savedTime);
+    const wasPlaying = localStorage.getItem('audioPlaying') === 'true';
+
+    function fadeInAudio() {
+    let volume = 0;
+    const targetVolume = 0.3; 
+    const interval = setInterval(() => {
+        if (volume < targetVolume) {
+            volume = Math.min(volume + 0.05, targetVolume);
+            audio.volume = volume;
+        } else {
+            clearInterval(interval);
+        }
+    }, 200);
+}
+    function unmuteAndPlay() {
+        if (audio.muted) {
+            audio.muted = false;
+            fadeInAudio();
+        }
+        if (wasPlaying || audio.paused) {
+            audio.play().catch(err => console.log('Playback error:', err));
+        }
+        removeListeners();
+    }
+
+    function removeListeners() {
+        document.removeEventListener('click', unmuteAndPlay);
+        document.removeEventListener('touchstart', unmuteAndPlay);
+        document.removeEventListener('keydown', unmuteAndPlay);
+    }
+
+    document.addEventListener('click', unmuteAndPlay);
+    document.addEventListener('touchstart', unmuteAndPlay);
+    document.addEventListener('keydown', unmuteAndPlay);
+
+    setInterval(() => {
+        if (!audio.paused) localStorage.setItem('audioCurrentTime', audio.currentTime);
+    }, 1000);
+
+    audio.addEventListener('play', () => localStorage.setItem('audioPlaying', 'true'));
+    audio.addEventListener('pause', () => localStorage.setItem('audioPlaying', 'false'));
+});
+</script>
+    
+<header>
+  <img src="image/logo.png" alt="Logo" class="logo" loading="lazy">
+  <h1 class="no-break"><span id="disp-name-header">N/A</span> 訃告</h1>
+</header>
+
+
+<main>
+  <section class="main-photo-section">
+    <img id="main-photo" src="" alt="追思照片" loading="lazy">
+
+    <div id="life-story">
+      <p id="life-story-p1" class="fade-in-text" style="--delay:0s;">我們摯愛的親人 <strong id="disp-name-story">N/A</strong></p>
+
+      <p id="life-story-p2" class="fade-in-text" style="--delay:0.3s;">
+        於民國<span id="disp-deathDate-year">N/A</span>年<span id="disp-deathDate-month">N/A</span>月<span id="disp-deathDate-day">N/A</span>日<br>
+        走完<span id="disp-age-story">N/A</span>年的人生旅程，<br>
+        留下我們永恆的追思與感恩。
+      </p>
+
+      <p id="life-story-p3" class="fade-in-text" style="--delay:0.6s;">
+        謹擇於<br>
+        民國<span id="disp-funeralDate-year">N/A</span>年<span id="disp-funeralDate-month">N/A</span>月<span id="disp-funeralDate-day">N/A</span>日（<span id="disp-funeralDate-dayname">N/A</span>）<br>
+        於 <span id="disp-funeralLocation-detail">N/A</span><br>
+        舉辦告別追思奠禮
+      </p>
+
+        <p class="fade-in-text" style="--delay:1.2s;">
+        敬邀您<br>
+        一同參與<span id="disp-name-story2">N/A</span>的畢業典禮<br>
+      </p>
+
+      <p class="fade-in-text" style="--delay:1.5s;">
+        感謝您的關懷與陪伴<br>
+        家人們銘記在心，衷心感謝。
+      </p>
+
+      <p class="fade-in-text" style="--delay:1.8s;">
+        <strong>豎靈地點：</strong><span id="disp-verticalAddress">N/A</span> <br>
+        地址：<span id="disp-verticalAddressDetail">N/A</span>
+      </p>
+
+      <p class="fade-in-text" style="--delay:2.1s;">
+        <strong>出殯地點：</strong><span id="disp-contactAddress-name">N/A</span><br>
+        地址：<span id="disp-contactAddress">N/A</span>
+      </p>
+    </div>
+  </section>
+</main>
+
+<style>
+@font-face {
+  font-family: 'Iansui';
+  src: url('Iansui-Regular.ttf') format('truetype');
+}
+/* 🕊️ Life Story 區塊 */
+#life-story {
+  font-family: 'Iansui', 'Noto Serif TC', serif;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: #2e2e2e;
+  text-align: center;
+  white-space: pre-line;
+  margin: 2em auto;
+  width: 95%;
+  max-width: 600px;
+  transform-origin: center center;
+}
+#life-story p {
+  margin: 0.8em 0; display: block; font-size: clamp(16px, 2vw, 22px); line-height: 1.6; text-align: center; white-space: pre-line; word-break: keep-all;
+}
+#life-story p:first-child { margin-bottom: 0.4em; }
+#life-story p:nth-child(2) { margin-bottom: 0.1em; }
+#life-story p:nth-child(3) { margin-bottom: 0.05em; }
+#life-story p:nth-child(4) { margin-bottom: 0.1em; }
+#life-story p:nth-child(5) { margin-bottom: 0.2em; }
+#life-story p:nth-child(6),
+#life-story p:nth-child(7) { margin: 0.025em 0; }
+#life-story strong { font-weight: 600; color: #1f1f1f; display: inline; }
+@media (max-width: 768px) { #life-story { font-size: clamp(15px, 2.6vw, 20px); line-height: 1.7; } }
+@media (max-width: 480px) { #life-story { font-size: clamp(14px, 3.4vw, 18px); line-height: 1.75; margin-top: 1.2em; } }
+
+.fade-in-text { opacity: 0; transform: translateY(18px); transition: opacity 0.9s ease-out, transform 0.9s ease-out; }
+.fade-in-text.visible { opacity: 1; transform: translateY(0); }
+
+.paper-obituary-section { margin: 30px auto; text-align: center; }
+#paper-obituary { cursor: pointer; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 90%; height: auto; transition: transform 0.3s ease; }
+#paper-obituary:hover { transform: scale(1.02); }
+
+/* 燈箱 */
+#zoom-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px) brightness(0.85); background-color: rgba(0,0,0,0.7); z-index: 9999; overflow: auto; padding: 20px; box-sizing: border-box; transition: opacity 0.4s ease; opacity: 0; }
+#zoom-container.show { display: flex; opacity: 1; }
+#zoom-img { max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.35); transform: scale(0.9); opacity: 0; transition: transform 0.4s ease, opacity 0.4s ease; }
+#zoom-container.show #zoom-img { transform: scale(1); opacity: 1; }
+@media (max-width: 768px) { #zoom-img { max-width: 90%; max-height: 80%; } }
+@media (max-width: 480px) { #zoom-img { max-width: 95%; max-height: 75%; } }
+
+.main-photo-section { position: relative; width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+#main-photo { width: 100%; height: auto; border-radius: 10px; max-height: 95vh; object-fit: cover; object-position: top center; }
+@media (max-width: 768px) { #main-photo { object-position: center; } }
+
+/* 追思與緬懷樣式 */
+#remembrance { padding: 20px; text-align: center; max-width: 760px; margin: 30px auto; }
+#remembrance h2 { font-family: 'Iansui', 'Noto Serif TC', serif; font-size: 28px; margin-bottom: 20px; color: #3d2b1f; }
+.remembrance-details { display: flex; flex-wrap: wrap; justify-content: space-around; text-align: center; }
+.remembrance-item { width: 45%; margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+.remembrance-item h3 { font-size: 20px; color: #8b5e3c; margin-bottom: 5px; }
+.remembrance-item p { margin: 5px 0; font-size: 18px; color: #555; }
+.remembrance-item a { color: #007bff; text-decoration: none; }
+@media (max-width: 600px) { .remembrance-item { width: 100%; } }
+
+/* 地圖樣式 */
+.map-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-top: 20px; }
+.map-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+@media (max-width:600px){ .map-wrapper { padding-bottom: 70%; } }
+
+/* 感謝信息區 */
+.remembrance-thanks { font-family: 'Iansui', 'Noto Serif TC', serif; padding: 40px 20px; text-align: center; line-height: 1.9; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); margin-bottom: 30px; max-width: 760px; margin: 30px auto; }
+.remembrance-thanks p { font-size: clamp(18px,2.5vw,26px); margin: 12px 0; opacity: 0; transform: translateY(20px); transition: opacity 1.2s ease-out, transform 1.2s ease-out; }
+.remembrance-thanks p.visible { opacity: 1; transform: translateY(0); }
+.remembrance-thanks p strong { color: #8b5e3c; }
+
+/* 花籃訂購區 */
+#donate-flower { text-align:center; margin:20px auto; max-width:500px; padding:20px; border:3px solid #005bb5; border-radius:12px; background-color:#e6f2ff; box-shadow:0 6px 12px rgba(0,0,0,0.15); }
+#donate-flower h3 { font-family:'Iansui','Noto Serif TC', serif; font-size:29px; color:#00274d; margin-bottom:10px; }
+#donate-flower p { font-size:20px; color:#333; margin-bottom:15px; }
+.btn, .btn-order { display:inline-block; padding:10px 25px; font-size:20px; color:#fff; background-color:#0077e6; border:none; border-radius:6px; text-decoration:none; box-shadow:0 4px 8px rgba(0,0,0,0.1); transition:all 0.3s ease; margin-top:10px; }
+.btn:hover, .btn-order:hover { background-color:#005bb5; transform:translateY(-3px); box-shadow:0 6px 12px rgba(0,0,0,0.2); }
+
+/* 花籃畫廊 */
+#flower-basket-gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:18px; margin-top:20px; opacity:0; max-height:0; overflow:hidden; transition:max-height 0.6s ease, opacity 0.6s ease; max-width: 900px; margin: 20px auto; }
+#flower-basket-gallery.show { opacity:1; max-height:2000px; }
+.zoomable { text-align:center; }
+.zoomable img { width:100%; border:2px solid #ccc; border-radius:8px; cursor:zoom-in; transition:transform 0.3s ease, box-shadow 0.3s ease; }
+.zoomable img:hover { transform:scale(1.05); box-shadow:0 6px 14px rgba(0,0,0,0.2); }
+.price { margin-top:10px; font-size:16px; color:#444; }
+
+/* 放大圖層 */
+#image-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:9999; }
+#image-overlay img { max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.3); transition:transform 0.3s; }
+
+/* 固定聯絡按鈕 */
+#fixed-links { position:fixed; bottom:10px; right:10px; display:flex; gap:10px; align-items:center; z-index:1000; }
+#fixed-links img { width:auto; height:auto; max-width:70px; max-height:50px; border-radius:5px; }
+
+/* 名片 */
+#business-card { text-align:center; margin:20px auto; }
+.business-card-img { max-width:500px; width:100%; height:auto; margin-bottom:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.3s ease; }
+.business-card-img:active { transform:scale(1.05); }
+
+/* 分享按鈕 */
+#share-buttons { text-align:center; margin:10px auto; }
+.share-btns { display:flex; justify-content:center; gap:15px; }
+.share-btn { display:inline-block; width:50px; height:50px; transition:transform 0.3s ease, box-shadow 0.3s ease; }
+.share-btn img { width:100%; height:auto; border-radius:50%; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+.share-btn:hover { transform:scale(1.1); box-shadow:0 6px 12px rgba(0,0,0,0.2); }
+
+/* 交通資訊區塊 */
+.transport-section {
+    padding: 20px; background-color: #f9f9f9; border-radius: 10px; margin-top: 20px; text-align: center; box-shadow: rgba(0, 0, 0, 0.1) 0 6px 12px; max-width: 900px; margin-left: auto; margin-right: auto;
+}
+.transport-section h2 { font-family: 'Iansui', 'Noto Serif TC', serif; font-size: 28px; margin-bottom: 20px; color: #3d2b1f; }
+.transport-details { display: flex; flex-wrap: wrap; justify-content: space-around; text-align: left; padding: 10px 0; }
+.transport-item { margin: 10px; }
+.transport-item h3, .transport-item h4 { color: #8b5e3c; margin-bottom: 5px; }
+.transport-item p { margin: 3px 0; }
+.map-link { display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none; font-weight: bold; }
+.image-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; justify-items: center; margin-top: 15px; }
+.gallery-img { width: 100%; height: auto; border-radius: 10px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+.gallery-img:hover { transform: scale(1.08); box-shadow: rgba(0, 0, 0, 0.2) 0 8px 16px; }
+.lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; animation: fadeInLightbox 0.3s forwards; }
+@keyframes fadeInLightbox { to { opacity: 1; } }
+
+/* 參加喪禮區塊 */
+.funeral-attend { font-family: 'Iansui', 'Noto Serif TC', serif; max-width: 760px; margin: 40px auto; padding: 36px 24px; text-align: center; background-color: #ffffff; border: 2px solid #d9c3a3; border-radius: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.08); animation: fadeInUp 0.8s ease forwards; }
+.attend-header h2 { font-size: clamp(24px, 4vw, 30px); color: #3d2b1f; letter-spacing: 2px; margin: 0; font-weight: 700; }
+.attend-info p { font-size: clamp(16px, 2.5vw, 18px); margin: 6px 0; color: #333; }
+.attend-notice { text-align: left; margin: 20px 0; }
+.attend-notice h3 { font-size: clamp(18px, 3vw, 22px); color: #4a3b2b; margin-bottom: 10px; font-weight: 700; }
+.attend-notice ul { padding-left: 20px; margin: 0; }
+.attend-notice ul li { font-size: clamp(16px, 2.5vw, 18px); margin-bottom: 8px; line-height: 1.8; color: #444; }
+.flower-section { margin: 22px 0; }
+.contact-btn { display: inline-block; background: linear-gradient(90deg, #4a90e2, #357ab8); color: #fff; text-decoration: none; padding: 10px 26px; border-radius: 10px; font-size: clamp(15px, 2.5vw, 18px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s ease, opacity 0.2s ease; }
+.contact-btn.line { background: linear-gradient(90deg, #00c300, #009900); }
+@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* 頁腳文字自適應 CSS */
+.footer-info { text-align: center; font-family: 'Noto Serif TC', serif; background-color: #f9f9f9; border-top: 1px solid #ddd; padding: 20px 10px; margin-top: 40px; }
+.footer-text { display: block; text-align: center; color: #333; line-height: 1.6; margin: 5px 0; overflow: visible; }
+.footer-text .fit-text { display: inline-block; white-space: nowrap; font-weight: 700; font-size: 16px; }
+.highlight { color: #555; }
+</style>
+
+ <section class="paper-obituary-section">
+  <h2><strong>訃告正本</strong></h2>
+  <img id="paper-obituary" src="" alt="訃聞紙本" loading="lazy">
+</section>
+
+<div id="zoom-container">
+  <img id="zoom-img" src="" alt="放大檢視">
+</div>
+
+<section id="remembrance">
+  <h2><strong>追思緬懷</strong></h2>
+  <div class="remembrance-details">
+    <div class="remembrance-item">
+      <h3><strong>豎靈地點</strong></h3>
+      <p><strong><span id="disp-verticalAddress-2">N/A</span></strong></p>
+      <p><strong><a id="link-verticalAddressDetail" href="" target="_blank">地址：<span id="disp-verticalAddressDetail-2">N/A</span></a></strong></p>
+    </div>
+    <div class="remembrance-item">
+      <h3><strong>出殯地點</strong></h3>
+      <p><strong><span id="disp-funeralLocation-2">N/A</span></strong></p>
+      <p><strong><a id="link-contactAddress" href="" target="_blank">地址：<span id="disp-contactAddress-2">N/A</span></a></strong></p>
+    </div>
+    <div class="remembrance-item">
+      <h3><strong>出殯日期</strong></h3>
+      <p><strong><span id="disp-funeralDate-full">N/A</span>（<span id="disp-funeralDate-dayname-2">N/A</span>）</strong></p>
+    </div>
+    <div class="remembrance-item">
+      <h3><strong>家奠禮</strong></h3>
+      <p><strong><span id="disp-jiadianTimePhrase-2">N/A</span> </strong></p>
+      <h3><strong>公奠禮</strong></h3>
+      <p><strong><span id="disp-gongdianTimePhrase-2">N/A</span></strong></p>
+    </div>
+    <div class="remembrance-item">
+      <h3><strong>聯繫電話</strong></h3>
+      <p><strong><span id="disp-contactNameA-2">N/A</span> 📞 <a id="link-contactPhoneA-2" href="tel:">N/A</a></strong></p>
+    </div>
+  </div>
+        <div class="map-wrapper" aria-hidden="false" role="region" aria-label="地圖：治喪地點">
+  <iframe
+    id="google-map-embed"
+    title="地圖 — 治喪地點"
+    src=""
+    loading="lazy"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade"
+    aria-label="治喪地點地圖">
+  </iframe>
+</div>
+
+<section class="remembrance-thanks">
+  <article>
+    <div id="disp-obituaryThanks"></div> 
+  </article>
+</section>
+
+<section id="donate-flower">
+  <h3><strong>致贈花籃，送上祝福</strong></h3>
+  <p><strong id="flower-policy-text">N/A</strong></p>
+  <a id="link-lineContactLink-flower" href="#" target="_blank" class="btn-order"><strong>加入 LINE 訂購</strong></a>
+  <a href="javascript:void(0);" id="show-flower-baskets" class="btn"><strong>顯示花籃樣式 🌹</strong></a>
+</section>
+
+<div id="flower-basket-gallery">
+</div>
+
+<div id="image-overlay"><img id="overlay-img" src="" alt=""></div>
+
+<div id="fixed-links">
+  <a id="link-fixed-musicianPhone" href="tel:"><img src="image/24小時專線.png" alt="24小時服務電話"></a>
+  <a id="link-fixed-lineContactLink" href="#" target="_blank"><img src="image/聯繫line.PNG" alt="LINE 聯絡我們"></a>
+</div>
+
+<section id="business-card">
+  <img id="disp-businessCardImg" src="" alt="名片" class="business-card-img">
+</section>
+
+<section id="share-buttons">
+  <h2><strong>分享此頁面</strong></h2>
+  <div class="share-btns">
+    <a href="#" target="_blank" class="share-btn fb-share-btn" aria-label="Share on Facebook"><img src="image/fb.png" alt="Share on Facebook"></a>
+    <a href="#" target="_blank" class="share-btn line-share-btn" aria-label="Share on Line"><img src="image/line.png" alt="Share on Line"></a>
+  </div>
+</section>
+
+<section id="transport-info" class="transport-section">
+  <h2><strong>交通資訊</strong></h2>
+  <div class="transport-details">
+    <div class="transport-item">
+      <h3>📍 <span id="disp-funeralLocation-3">N/A</span></h3>
+      <p><strong>地址：</strong><span id="disp-contactAddress-3">N/A</span></p>
+    </div>
+    <div class="transport-item">
+      <h4>🚍 公車資訊</h4>
+      <p><strong>新海橋頭站：</strong>658、857、橘5</p>
+      <p><strong>新海抽水站：</strong>810、786</p>
+      <p>🧍‍♂️ 步行約 3 分鐘即可到達</p>
+    </div>
+    <div class="transport-item">
+      <a id="link-map-link-bottom" class="map-link" href="#" target="_blank">
+        ➤ 點我開啟 Google 地圖
+      </a>
+    </div>
+  </div>
+  <div class="transport-image-area">
+    <h2 class="title">殯儀館導引圖與停車資訊</h2>
+    <p class="subtitle">點擊圖片可放大查看</p>
+    <div class="image-gallery">
+      <img id="disp-mapImg1" src="" alt="殯儀館資訊" class="gallery-img" loading="lazy">
+      <img id="disp-mapImg2" src="" alt="停車地圖" class="gallery-img" loading="lazy">
+    </div>
+  </div>
+</section>
         
-        <div class="content-section">
-            <h2>🕊️ 辭世資訊</h2>
-            <div class="detail-item">
-                <strong>姓名/性別:</strong>
-                <span><span id="nameInfo"></span> / <span id="genderInfo"></span></span>
-            </div>
-            <div class="detail-item">
-                <strong>出生日期:</strong>
-                <span id="birthDateInfo"></span>
-            </div>
-            <div class="detail-item">
-                <strong>辭世日期 (國曆):</strong>
-                <span id="deathDateInfo"></span>
-            </div>
-            <div class="detail-item">
-                <strong>辭世日期 (農曆):</strong>
-                <span id="deathLunarDateInfo"></span>
-            </div>
-        </div>
+<section class="funeral-attend">
+  <div class="attend-header"> 
+    <h2>參加喪禮</h2>
+  </div>
+  <div class="attend-info">
+    <p>🗓️ <strong>國曆：</strong><span id="disp-funeralDate-full-2">N/A</span>（<span id="disp-funeralDate-dayname-3">N/A</span>）</p>
+    <p>🌙 <strong>農曆：</strong><span id="disp-deathLunarDate-2">N/A</span></p>
+    <p>📍 <strong>地點：</strong><span id="disp-funeralLocation-4">N/A</span></p>
+  </div>
+  <div class="attend-notice">
+    <h3>⚠️ 注意事項</h3>
+    <ul>
+      <li>請著整齊、樸素服裝、包鞋，以表尊敬與追思之意。</li>
+      <li>儀式期間請將手機調為靜音或關機。</li>
+      <li>殯儀館內請勿「再見、掰掰」，以「平安」代替即可。</li>
+      <li>會場門口備有淨水，來賓可洗淨後再離場。</li>
+      <li>若來賓因宗教信仰不持香，可與工作人員示意。</li>
+    </ul>
+  </div>
+  <div class="flower-section">
+    <h3>🌸 花籃</h3>
+    <p><span id="disp-flower-policy-attend">N/A</span></p>
+  </div>
+  <div class="attend-contact">
+    <p class="contact-name">禮儀師 <span id="disp-musician-2">N/A</span></p>
+    <div class="contact-btns">
+      <a id="link-musicianPhone-attend" href="tel:" class="contact-btn phone">📞 <span id="disp-musicianPhone-2">N/A</span></a>
+      <a id="link-lineContactLink-attend" href="#" target="_blank" class="contact-btn line">💬 LINE 聯繫</a>
+    </div>  
+  </div>
+</section>
 
-        <div class="content-section">
-            <h2>📅 儀式地點</h2>
-            <div class="detail-item">
-                <strong>出殯日期:</strong>
-                <span id="funeralDateInfo"></span>
+<footer style="background-color: #f3f3f3; padding: 20px 0; text-align: center; font-family: Arial, sans-serif;">
+    <div style="max-width: 400px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center; display: flex; align-items: center;">
+        <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin-right: 20px;">
+            <img id="disp-responsiblePersonImg" src="" alt="負責人照片" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div style="flex: 1; text-align: left;">
+            <div class="company-logo">
+                <p id="disp-footerCompanyName-1">N/A</p>
             </div>
-            <div class="detail-item">
-                <strong>家奠時間:</strong>
-                <span id="jiadianTimePhraseInfo"></span>
+            <div style="margin-bottom: 15px;">
+                <p style="font-size: 16px; margin: 5px 0;"><strong>承辦人員：<span id="disp-musician-3">N/A</span></strong></p>
+                <p style="font-size: 16px; color: #007BFF; margin: 5px 0;">聯絡電話：<span id="disp-musicianPhone-3">N/A</span></p>
             </div>
-            <div class="detail-item">
-                <strong>出殯地點:</strong>
-                <span id="funeralLocationInfo"></span>
-            </div>
-            <div class="detail-item">
-                <strong>安葬/火化:</strong>
-                <span id="disposalTypeInfo"></span>
-            </div>
-            <div class="detail-item">
-                <strong>靈骨安厝:</strong>
-                <span class="ashes-detail" id="ashesPlacementDetailInfo"></span>
+            <div style="margin-top: 15px;">
+                <a id="link-lineContactLink-footer" href="#" target="_blank" style="display: inline-block; padding: 10px 20px; margin: 5px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px;">
+                    生命禮儀、禮俗 免費諮詢
+                </a>
             </div>
         </div>
-
-        <div class="content-section">
-            <h2>📞 聯絡資訊</h2>
-            <div class="detail-item">
-                <strong>連絡處地址:</strong>
-                <span id="contactAddressInfo"></span>
-            </div>
-            <div class="detail-item">
-                <strong>家屬連絡人 A:</strong>
-                <span><span id="contactNameAInfo"></span> (<span id="contactPhoneAInfo"></span>)</span>
-            </div>
-            <div class="detail-item">
-                <strong>家屬連絡人 B:</strong>
-                <span><span id="contactNameBInfo"></span> (<span id="contactPhoneBInfo"></span>)</span>
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <a id="flowerOrderLink" href="flower_order_form.html" class="flower-btn">💐 線上訂購花籃</a> 
-            <a id="musicianCallLink" href="tel:0933789012" class="contact-btn">📱 聯絡禮儀師</a>
-        </div>
-        
-        <div class="paper-link">
-            <a id="obituaryPaperLink" href="#" target="_blank">📄 點此查看原始訃聞紙本照片</a>
-        </div>
-
-        <div class="responsible-info">
-            <img id="responsiblePersonImgDisplay" src="default_responsible.jpg" alt="禮儀師照片">
-            <div>
-                <p>承辦禮儀師: <span id="musicianInfo"></span></p>
-                <p>服務電話: <span id="musicianPhoneInfo"></span></p>
-                <div class="card-link">
-                    <a id="businessCardImgLink" href="#" target="_blank">📇 查看禮儀公司名片</a>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. 讀取儲存的數據
-            const fubenDataString = localStorage.getItem('fubenData');
-            if (!fubenDataString) {
-                alert('找不到訃聞數據，請先返回輸入頁面填寫。');
-                return;
-            }
-            const data = JSON.parse(fubenDataString);
+  <div class="footer-info">
+    <p class="footer-text">
+      <strong class="fit-text">承辦禮儀公司 <span id="disp-footerCompanyName-2">N/A</span> ｜ 禮儀師：<span id="disp-musician-4">N/A</span></strong>
+    </p>
+    <p class="footer-text">
+      <strong class="fit-text">© 2025 <span id="disp-name-footer">N/A</span> 訃告 ｜ <span class="highlight"><span id="disp-footerCompanyName-3">N/A</span></span> 版權所有</strong>
+    </p>
+  </div>
+</footer>
 
-            // 2. 數據綁定到頁面元素
-            
-            // Header & Deceased Info
-            document.getElementById('deceasedName').textContent = data.name;
-            document.getElementById('deceasedGenderTitle').textContent = data.gender === '女' ? '女士' : '先生';
-            document.getElementById('deceasedAge').textContent = data.age;
-            
-            // Photo
-            const photoDisplay = document.getElementById('deceasedPhotoDisplay');
-            if (data.deceasedPhoto) {
-                photoDisplay.src = data.deceasedPhoto;
-            }
+<script>
+// ====================================================
+// 核心數據載入與填充邏輯
+// ====================================================
 
-            // Deceased Info
-            document.getElementById('nameInfo').textContent = data.name;
-            document.getElementById('genderInfo').textContent = data.gender;
-            document.getElementById('birthDateInfo').textContent = data.birthDate;
-            document.getElementById('deathDateInfo').textContent = data.deathDate;
-            document.getElementById('deathLunarDateInfo').textContent = data.deathLunarDate;
+const FLOWER_PRICES = {
+    'A': 'NT$2,500/對', 'B': 'NT$3,000/對', 'C': 'NT$3,500/對', 'D': 'NT$4,500/對',
+    'E': 'NT$5,000/對', 'F': 'NT$5,500/對', 'G': 'NT$6,000/對', 'H': 'NT$6,500/對'
+};
 
-            // Ceremony Info
-            document.getElementById('funeralDateInfo').textContent = data.funeralDate;
-            document.getElementById('jiadianTimePhraseInfo').textContent = data.jiadianTimePhrase;
-            document.getElementById('funeralLocationInfo').textContent = data.funeralLocation;
-            document.getElementById('disposalTypeInfo').textContent = data.disposalType;
-            document.getElementById('ashesPlacementDetailInfo').textContent = data.ashesPlacementDetail;
+/**
+ * 格式化日期並獲取星期幾
+ */
+function formatFuneralDate(dateStr) {
+    // 確保輸入是 YYYY-MM-DD 格式
+    if (!dateStr || dateStr.length !== 10) return { year: 'N/A', month: 'N/A', day: 'N/A', dayname: 'N/A', full: 'N/A' };
+    
+    // 使用 new Date(dateStr + 'T00:00:00') 避免時區問題
+    const date = new Date(dateStr + 'T00:00:00');
+    const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+    
+    if (isNaN(date.getTime())) return { year: 'N/A', month: 'N/A', day: 'N/A', dayname: 'N/A', full: 'N/A' };
 
-            // Contact Info
-            document.getElementById('contactAddressInfo').textContent = data.contactAddress;
-            document.getElementById('contactNameAInfo').textContent = data.contactNameA;
-            document.getElementById('contactPhoneAInfo').textContent = data.contactPhoneA;
-            document.getElementById('contactNameBInfo').textContent = data.contactNameB;
-            document.getElementById('contactPhoneBInfo').textContent = data.contactPhoneB;
+    const year = date.getFullYear() - 1911; // 民國年
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayname = dayNames[date.getDay()];
+    
+    return {
+        year: year,
+        month: month,
+        day: day,
+        dayname: `星期${dayname}`,
+        full: `${date.getFullYear()} 年 ${month} 月 ${day} 日` // 西元年全稱
+    };
+}
 
-            // Responsible Person/Musician Info
-            document.getElementById('musicianInfo').textContent = data.musician;
-            document.getElementById('musicianPhoneInfo').textContent = data.musicianPhone;
-            
-            const responsiblePhotoDisplay = document.getElementById('responsiblePersonImgDisplay');
-            if (data.responsiblePersonImg) {
-                responsiblePhotoDisplay.src = data.responsiblePersonImg;
-            }
+/**
+ * 動態生成花籃畫廊
+ */
+function generateFlowerGallery(codesStr) {
+    const gallery = document.getElementById('flower-basket-gallery');
+    gallery.innerHTML = '';
+    // 將輸入的樣式代碼字串轉換為陣列
+    const codes = codesStr.split(',').map(c => c.trim().toUpperCase()).filter(c => c);
 
-            // 3. 動作連結設定
-            
-            // 聯絡禮儀師 (撥打電話)
-            document.getElementById('musicianCallLink').href = `tel:${data.musicianPhone.replace(/-/g, '')}`;
-
-            // 紙本照片連結
-            const paperLink = document.getElementById('obituaryPaperLink');
-            if (data.obituaryPaper) {
-                paperLink.href = data.obituaryPaper;
-            } else {
-                paperLink.style.display = 'none'; // 如果沒有照片，隱藏連結
-            }
-
-            // 名片連結
-            const cardLink = document.getElementById('businessCardImgLink');
-            if (data.businessCardImg) {
-                cardLink.href = data.businessCardImg;
-            } else {
-                cardLink.style.display = 'none'; // 如果沒有名片，隱藏連結
-            }
-            
-            // 花籃訂購連結 (此處假設導向另一個訂購頁面 `flower_order_form.html`)
-            // 這裡可以根據 data.unifiedFlower 設定不同的邏輯
-            if (data.unifiedFlower === '否') {
-                 document.getElementById('flowerOrderLink').textContent = '💐 線上自訂花籃';
-            } else {
-                 document.getElementById('flowerOrderLink').textContent = '💐 統一訂購花籃 (樣式:' + data.flowerStyles + ')';
-            }
-
-            // 4. 背景音樂設置
-            const musicPlayer = document.getElementById('musicPlayer');
-            if (data.musicPath) {
-                musicPlayer.src = data.musicPath + '.mp3'; // 假設音樂檔為 .mp3
-                musicPlayer.style.display = 'block';
-                // 註: 瀏覽器可能限制自動播放，通常需要用戶互動
-                // musicPlayer.play().catch(e => console.log("無法自動播放音樂:", e));
-            }
+    codes.forEach(code => {
+        const price = FLOWER_PRICES[code] || `價格不明`;
+        const div = document.createElement('div');
+        div.classList.add('zoomable');
+        div.innerHTML = `
+            <img src="image/花籃${code}款.JPG" alt="花籃${code}" loading="lazy">
+            <p class="price"><strong>${code}款 ${price}</strong></p>
+        `;
+        gallery.appendChild(div);
+        
+        // 綁定燈箱事件
+        div.querySelector('img').addEventListener('click', function() {
+            const overlay = document.getElementById('image-overlay');
+            const overlayImg = document.getElementById('overlay-img');
+            overlayImg.src = this.src;
+            overlay.style.display = 'flex';
         });
-    </script>
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const dataStr = localStorage.getItem('fubenData');
+    if (!dataStr) {
+      console.error("未找到本地儲存的訃聞數據！");
+      return; 
+    }
+
+    const data = JSON.parse(dataStr);
+    const funeralDateInfo = formatFuneralDate(data.funeralDate);
+    const deathDateInfo = formatFuneralDate(data.deathDate);
+    const lineLink = data.lineContactLink || '#';
+    const mapIframeSrc = data.mapIframeLink || '';
+    
+    // 嘗試從地址推導出 Google Map 連結，用於開啟新視窗
+    // 使用 contactAddress 作為地圖連結的目的地
+    const mapLinkTarget = data.contactAddress || data.funeralLocation;
+    const mapLinkBase = `https://www.google.com/maps/place/${encodeURIComponent(mapLinkTarget)}`;
+
+    const setContent = (id, content) => {
+        const el = document.getElementById(id);
+        // 如果內容為空或 N/A，則不替換，否則替換 [亡者姓名]
+        if (el && content) el.textContent = content.replace(/\[亡者姓名\]/g, data.name);
+    };
+    
+    // 設置電話連結
+    const setLink = (id, href, telPrefix = false) => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (telPrefix) {
+                const cleanNumber = href.replace(/-/g, '').replace(/\s/g, '');
+                el.href = `tel:${cleanNumber}`;
+                // 如果是電話連結本身，也更新顯示文字
+                if(el.tagName === 'A' && el.textContent.trim() === 'N/A') el.textContent = href;
+            } else {
+                el.href = href;
+            }
+        }
+    };
+    
+    const setImgSrc = (id, src) => {
+        const el = document.getElementById(id);
+        if (el && src) el.src = src;
+    };
+    
+    // ======================================
+    // A. 數據填充
+    // ======================================
+    
+    // 媒體與圖片
+    setImgSrc('music-source-mp3', data.musicPath ? `${data.musicPath}.mp3` : '');
+    setImgSrc('music-source-ogg', data.musicPath ? `${data.musicPath}.ogg` : '');
+    document.getElementById('background-music').load();
+    setImgSrc('main-photo', data.deceasedPhoto);
+    setImgSrc('paper-obituary', data.obituaryPaper);
+    setImgSrc('disp-businessCardImg', data.businessCardImg);
+    setImgSrc('disp-responsiblePersonImg', data.responsiblePersonImg);
+    setImgSrc('disp-mapImg1', data.mapImg1);
+    setImgSrc('disp-mapImg2', data.mapImg2);
+    
+    // 標頭與主視覺
+    document.getElementById('page-title').textContent = `${data.name} 訃聞公告`;
+    setContent('disp-name-header', data.name);
+    setContent('disp-name-story', data.name);
+    setContent('disp-name-story2', data.name);
+    setContent('disp-deathDate-year', deathDateInfo.year);
+    setContent('disp-deathDate-month', deathDateInfo.month);
+    setContent('disp-deathDate-day', deathDateInfo.day);
+    setContent('disp-age-story', data.age);
+    setContent('disp-funeralDate-year', funeralDateInfo.year);
+    setContent('disp-funeralDate-month', funeralDateInfo.month);
+    setContent('disp-funeralDate-day', funeralDateInfo.day);
+    setContent('disp-funeralDate-dayname', funeralDateInfo.dayname);
+    setContent('disp-funeralLocation-detail', data.funeralLocation);
+    setContent('disp-verticalAddress', data.verticalAddress);
+    setContent('disp-verticalAddressDetail', data.verticalAddressDetail);
+    setContent('disp-contactAddress-name', data.funeralLocation.split(' ')[0]);
+    setContent('disp-contactAddress', data.contactAddress);
+
+    // 追思與緬懷區
+    setContent('disp-verticalAddress-2', data.verticalAddress);
+    setContent('disp-verticalAddressDetail-2', data.verticalAddressDetail);
+    setContent('disp-funeralLocation-2', data.funeralLocation);
+    setContent('disp-contactAddress-2', data.contactAddress);
+    setContent('disp-funeralDate-full', funeralDateInfo.full);
+    setContent('disp-funeralDate-dayname-2', funeralDateInfo.dayname);
+    setContent('disp-jiadianTimePhrase-2', data.jiadianTimePhrase);
+    setContent('disp-gongdianTimePhrase-2', data.gongdianTimePhrase);
+    setContent('disp-contactNameA-2', data.contactNameA);
+    setLink('link-contactPhoneA-2', data.contactPhoneA, true);
+
+    // 感謝親友自訂文字 (處理換行)
+    if(data.obituaryThanks) {
+        document.getElementById('disp-obituaryThanks').innerHTML = data.obituaryThanks
+            .split('\n')
+            .map(p => p.trim())
+            .filter(p => p) // 移除空行
+            .map(p => `<p><strong>${p.replace(/\[亡者姓名\]/g, data.name)}</strong></p>`)
+            .join('');
+    }
+
+    // 交通資訊
+    setContent('disp-funeralLocation-3', data.funeralLocation.split(' ')[0]);
+    setContent('disp-contactAddress-3', data.contactAddress);
+
+    // 參加喪禮區
+    setContent('disp-funeralDate-full-2', funeralDateInfo.full);
+    setContent('disp-funeralDate-dayname-3', funeralDateInfo.dayname);
+    setContent('disp-deathLunarDate-2', data.deathLunarDate);
+    setContent('disp-funeralLocation-4', data.funeralLocation);
+    setContent('disp-musician-2', data.musician);
+    setContent('disp-musicianPhone-2', data.musicianPhone);
+    setLink('link-musicianPhone-attend', data.musicianPhone, true);
+
+    // 頁腳
+    setContent('disp-footerCompanyName-1', data.footerCompanyName);
+    setContent('disp-musician-3', data.musician);
+    setContent('disp-musicianPhone-3', data.musicianPhone);
+    setContent('disp-footerCompanyName-2', data.footerCompanyName);
+    setContent('disp-footerCompanyName-3', data.footerCompanyName);
+    setContent('disp-name-footer', data.name);
+    setContent('disp-musician-4', data.musician);
+
+
+    // ======================================
+    // B. 連結與政策
+    // ======================================
+    
+    // 地圖與地點連結
+    if(mapIframeSrc) document.getElementById('google-map-embed').src = mapIframeSrc;
+    setLink('link-verticalAddressDetail', mapLinkBase);
+    setLink('link-contactAddress', mapLinkBase);
+    setLink('link-map-link-bottom', mapLinkBase);
+    
+    // LINE 連結
+    setLink('link-lineContactLink-flower', lineLink);
+    setLink('link-fixed-lineContactLink', lineLink);
+    setLink('link-lineContactLink-attend', lineLink);
+    setLink('link-lineContactLink-footer', lineLink);
+    
+    // 電話連結 (24H 專線)
+    setLink('link-fixed-musicianPhone', data.musicianPhone, true);
+
+    // 花籃政策
+    if (data.unifiedFlower === '是') {
+        setContent('flower-policy-text', '為維持會場整齊，本次喪禮採統一製作花籃，請勿自行訂購。');
+        setContent('disp-flower-policy-attend', '為維持會場整齊，統一製作花籃。');
+        // 統一製作時隱藏「顯示花籃樣式」按鈕
+        document.getElementById('show-flower-baskets').style.display = 'none'; 
+    } else {
+        setContent('flower-policy-text', '若需致贈花籃，請於下方選擇樣式後，點選 LINE 與我們聯繫。');
+        setContent('disp-flower-policy-attend', '開放花籃致贈，請參閱頁面下方花籃樣式。');
+        document.getElementById('show-flower-baskets').style.display = 'inline-block';
+    }
+    
+    // 動態生成花籃畫廊 (即使政策統一，如果 codesStr 有值，仍然生成以供後續操作)
+    generateFlowerGallery(data.flowerStylesCodes || '');
+
+
+    // ======================================
+    // C. 頁面動態效果 (保持原樣)
+    // ======================================
+    
+    // Life-story 淡入效果
+    const fadeEls = document.querySelectorAll('.fade-in-text');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    });
+    fadeEls.forEach(el => observer.observe(el));
+    
+    // 訃告紙本點擊放大 (Lightbox)
+    const paperImg = document.getElementById('paper-obituary');
+    const zoomContainer = document.getElementById('zoom-container');
+    const zoomImg = document.getElementById('zoom-img');
+    paperImg.addEventListener('click', () => {
+      zoomImg.src = paperImg.src;
+      zoomContainer.style.display = 'flex';
+      setTimeout(() => zoomContainer.classList.add('show'), 20);
+    });
+    zoomContainer.addEventListener('click', e => {
+      if (e.target === zoomContainer || e.target === zoomImg) {
+        zoomContainer.classList.remove('show');
+        setTimeout(() => zoomContainer.style.display = 'none', 400);
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === "Escape") {
+        zoomContainer.classList.remove('show');
+        setTimeout(() => zoomContainer.style.display = 'none', 400);
+      }
+    });
+
+    // 感謝信息淡入
+    const thanksSection = document.querySelector('.remembrance-thanks');
+    const thanksObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          const texts = entry.target.querySelectorAll('p');
+          texts.forEach((el,i)=>setTimeout(()=>el.classList.add('visible'), i*400));
+        }
+      });
+    }, {threshold:0.1});
+    if (thanksSection) thanksObserver.observe(thanksSection);
+    
+    // 花籃畫廊展開
+    document.getElementById('show-flower-baskets').addEventListener('click', function () {
+      const gallery = document.getElementById('flower-basket-gallery');
+      gallery.classList.toggle('show');
+      this.innerHTML = gallery.classList.contains('show') 
+        ? '<strong>隱藏花籃樣式 🌹</strong>' 
+        : '<strong>顯示花籃樣式 🌹</strong>';
+    });
+    // 放大花籃圖片
+    document.getElementById('image-overlay').addEventListener('click', function(e) {
+        if (e.target.id === 'image-overlay' || e.target.id === 'overlay-img') {
+            this.style.display = 'none';
+        }
+    });
+
+
+    // 交通資訊圖片燈箱
+    document.querySelectorAll(".image-gallery img").forEach(img => {
+      img.addEventListener("click", function() {
+        const lightbox = document.createElement("div");
+        lightbox.classList.add("lightbox");
+        const lightboxImg = document.createElement("img");
+        lightboxImg.src = this.src;
+        lightbox.appendChild(lightboxImg);
+        document.body.appendChild(lightbox);
+        lightbox.addEventListener("click", () => lightbox.remove());
+      });
+    });
+
+    // 名片點擊放大
+    const cardImg = document.querySelector(".business-card-img");
+    if(cardImg){
+      cardImg.addEventListener("click", function(){
+        const modal = document.createElement("div");
+        modal.style.position="fixed"; modal.style.top="0"; modal.style.left="0"; modal.style.width="100vw"; modal.style.height="100vh";
+        modal.style.backgroundColor="rgba(0,0,0,0.8)"; modal.style.display="flex"; modal.style.alignItems="center"; modal.style.justifyContent="center"; modal.style.zIndex="10000";
+        const img = document.createElement("img"); img.src=cardImg.src; img.alt=cardImg.alt;
+        img.style.maxWidth="90%"; img.style.maxHeight="90%"; img.style.borderRadius="10px"; img.style.boxShadow="0 4px 8px rgba(0,0,0,0.5)"; img.style.cursor="pointer";
+        modal.appendChild(img); document.body.appendChild(modal);
+        modal.addEventListener("click",()=>document.body.removeChild(modal));
+      });
+    }
+
+    // 分享按鈕 URL 
+    let url = new URL(window.location.href);
+    url.searchParams.delete("fbclid");
+    url.searchParams.delete("utm_source");
+    // 如果是 Punycode 則轉換回來顯示
+    if(url.hostname.includes("xn--")) url.hostname="24hour.台灣"; 
+    let encodedUrl = encodeURIComponent(url.toString());
+    const fbShare = document.querySelector(".fb-share-btn");
+    const lineShare = document.querySelector(".line-share-btn");
+    if(fbShare) fbShare.href="https://www.facebook.com/sharer/sharer.php?u="+encodedUrl;
+    // LINE 分享使用不同的格式
+    if(lineShare) lineShare.href="https://line.me/R/msg/text/?【"+data.name+" 訃告】誠摯邀請您參與畢業典禮%0D%0A"+encodedUrl;
+    
+    // 頁腳文字自適應 JS (保持原樣)
+    (function () {
+        const MAX_FONT = 22; const MIN_FONT = 8; const PRECISION = 0.2; 
+        function fitOne(el) {
+            if (!el || !el.parentElement) return;
+            const parent = el.parentElement;
+            const containerWidth = parent.clientWidth;
+            if (containerWidth <= 0) return;
+            let low = MIN_FONT; let high = MAX_FONT;
+            el.style.fontSize = high + "px";
+            let w = el.getBoundingClientRect().width;
+            if (w <= containerWidth) { el.style.fontSize = high + "px"; return; }
+            while (high - low > PRECISION) {
+                const mid = (low + high) / 2;
+                el.style.fontSize = mid + "px";
+                w = el.getBoundingClientRect().width;
+                if (w > containerWidth) { high = mid; } else { low = mid; }
+            }
+            el.style.fontSize = Math.max(MIN_FONT, low) + "px";
+        }
+        function fitAll() {
+            const nodes = document.querySelectorAll('.footer-text .fit-text');
+            nodes.forEach(el => fitOne(el));
+        }
+        function start() {
+            fitAll();
+            if (window.ResizeObserver) {
+              const ro = new ResizeObserver(() => fitAll());
+              document.querySelectorAll('.footer-info').forEach(n => ro.observe(n));
+            }
+            window.addEventListener('resize', debounce(fitAll, 80));
+        }
+        function debounce(fn, wait) {
+            let t = null;
+            return function () {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, arguments), wait);
+            };
+        }
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(start).catch(start);
+        } else {
+            window.addEventListener('load', start);
+        }
+    })();
+});
+</script>
 </body>
 </html>
