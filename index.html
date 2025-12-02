@@ -2,26 +2,28 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>訃聞數據輸入頁 (最終修正版)</title>
+    <title>訃聞數據輸入頁 (URL 編碼版)</title>
     <style>
+        /* 樣式保持不變 */
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #333; }
         label { display: block; margin-top: 10px; font-weight: bold; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        /* 檔案上傳樣式 */
         input[type="file"] { width: 100%; padding: 10px 0; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f9f9f9; }
-
         button { display: block; width: 100%; padding: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer; font-size: 1.1em; }
         button:hover { background-color: #0056b3; }
         .section { border: 1px solid #ddd; padding: 15px; margin-top: 20px; border-radius: 6px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
         textarea { resize: vertical; }
+        .hidden-url-box { margin-top: 20px; padding: 15px; background-color: #e6ffe6; border: 1px solid #00c300; border-radius: 4px; display: none; }
+        .hidden-url-box p { font-weight: bold; margin-bottom: 10px; }
+        .url-output { word-break: break-all; background-color: #fff; padding: 10px; border: 1px dashed #009900; border-radius: 4px; cursor: copy; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>訃聞內容輸入 (最終修正版)</h1>
+        <h1>訃聞內容輸入 (URL 編碼版)</h1>
         <form id="fubenForm">
             <div class="section">
                 <h2>亡者資訊</h2>
@@ -69,9 +71,9 @@
                         <input type="text" id="musicianPhone" value="0938-179-858" required>
                     </div>
                 </div>
-                <label for="mapIframeLink">Google Maps 嵌入連結 (iframe src，例如: https://www.google.com/maps/embed?pb=!1m18!1m12!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a8b98f24458f%3A0x6a2c22e4d0c28340!2z6Ie65q-C56u55LiA6IK-5b-g!5e0!3m2!1szh-TW!2stw!4v1703031070213!5m2!1szh-TW!2stw):</label>
+                <label for="mapIframeLink">Google Maps 嵌入連結 (iframe src):</label>
                 <textarea id="mapIframeLink" rows="3" required>https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.115456956247!2d121.4552458!3d25.0300185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a8b98f24458f%3A0x6a2c22e4d0c28340!2z6Ie65q-C56u55LiA6IK-5b-g!5e0!3m2!1szh-TW!2stw!4v1703031070213!5m2!1szh-TW!2stw</textarea>
-                <label for="lineContactLink">LINE 聯絡連結 (例如: https://line.me/ti/p/nZJmE8-b6X):</label>
+                <label for="lineContactLink">LINE 聯絡連結:</label>
                 <input type="text" id="lineContactLink" value="https://line.me/ti/p/nZJmE8-b6X" required>
             </div>
             
@@ -102,8 +104,8 @@
                 <input type="file" id="mapImg2File" accept="image/*">
                 <input type="hidden" id="mapImg2" value="image/祥安資訊-板殯.png">
                 
-                <label for="musicPath">背景音樂路徑 (不含副檔名, ex: image/Misson Part 1):</label>
-                <input type="text" id="musicPath" value="image/Misson Part 1">
+                <label for="musicFile">背景音樂 (MP3/OGG):</label>
+                <input type="file" id="musicFile" accept="audio/mp3, audio/ogg">
             </div>
 
             <div class="section">
@@ -127,80 +129,169 @@
                 <input type="text" id="footerCompanyName" value="祥安生命有限公司">
             </div>
 
-            <button type="submit">生成訃聞展示頁</button>
+            <button type="submit">生成獨立網址與跳轉</button>
         </form>
+
+        <div id="result-box" class="hidden-url-box">
+            <p>✅ **請複製以下連結，這個就是家屬專屬的訃聞網址：**</p>
+            <div id="generated-url" class="url-output"></div>
+            <p style="margin-top: 10px;">(點擊網址即可複製)</p>
+            <button id="copy-and-go-btn" style="background-color: #28a745; margin-top: 10px;">點擊複製並開啟訃聞</button>
+        </div>
     </div>
 
     <script>
-    // -----------------------------------------------------------
-    // 核心轉換函式：將檔案轉換為 Base64 字串
-    // -----------------------------------------------------------
-    function getBase64(file) {
-        return new Promise((resolve, reject) => {
-            if (!file || file.size === 0 || !file.type.startsWith('image/')) {
-                resolve('');
-                return;
-            }
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
+    // --- 輔助函式：取得檔案輸入 ---
+    function getFile(id) {
+        const fileInput = document.getElementById(id);
+        return fileInput.files[0];
     }
-
-    // -----------------------------------------------------------
-    // 表單提交處理
-    // -----------------------------------------------------------
-    document.getElementById('fubenForm').addEventListener('submit', async function(e) {
+    
+    // --- 媒體檔案 ID 列表 ---
+    const mediaFileIds = [
+        'deceasedPhotoFile', 'obituaryPaperFile', 'businessCardImgFile', 
+        'responsiblePersonImgFile', 'mapImg1File', 'mapImg2File', 'musicFile'
+    ];
+    
+    // --- 表單提交處理 ---
+    document.getElementById('fubenForm').addEventListener('submit', function(e) {
         e.preventDefault(); 
         
-        // --- 處理圖片檔案上傳：await 等待所有檔案讀取完成 ---
-        const deceasedPhotoBase64 = await getBase64(document.getElementById('deceasedPhotoFile').files[0]);
-        const obituaryPaperBase64 = await getBase64(document.getElementById('obituaryPaperFile').files[0]);
-        const businessCardImgBase64 = await getBase64(document.getElementById('businessCardImgFile').files[0]);
-        const responsiblePersonImgBase64 = await getBase64(document.getElementById('responsiblePersonImgFile').files[0]);
-        const mapImg1Base64 = await getBase64(document.getElementById('mapImg1File').files[0]);
-        const mapImg2Base64 = await getBase64(document.getElementById('mapImg2File').files[0]);
+        // ----------------------------------------------------
+        // 1. 處理所有媒體檔案 (圖片和音樂) 為 Base64 字串
+        // ----------------------------------------------------
         
-        // --- 收集文字數據 ---
-        const formData = {
-            name: document.getElementById('name').value,
-            age: document.getElementById('age').value,
-            deathDate: document.getElementById('deathDate').value,
-            funeralDate: document.getElementById('funeralDate').value,
-            deathLunarDate: document.getElementById('deathLunarDate').value,
-            funeralLocation: document.getElementById('funeralLocation').value,
-            jiadianTimePhrase: document.getElementById('jiadianTimePhrase').value,
-            gongdianTimePhrase: document.getElementById('gongdianTimePhrase').value,
-            contactAddress: document.getElementById('contactAddress').value,
-            verticalAddress: document.getElementById('verticalAddress').value,
-            verticalAddressDetail: document.getElementById('verticalAddressDetail').value,
-            contactNameA: document.getElementById('contactNameA').value,
-            contactPhoneA: document.getElementById('contactPhoneA').value,
-            musician: document.getElementById('musician').value,
-            musicianPhone: document.getElementById('musicianPhone').value,
-            mapIframeLink: document.getElementById('mapIframeLink').value,
-            lineContactLink: document.getElementById('lineContactLink').value,
+        const data = {};
+        const filesToProcess = mediaFileIds.filter(id => getFile(id));
+        let processedCount = 0;
+        
+        // 收集所有文字數據
+        data.name = document.getElementById('name').value;
+        data.age = document.getElementById('age').value;
+        data.deathDate = document.getElementById('deathDate').value;
+        data.funeralDate = document.getElementById('funeralDate').value;
+        data.deathLunarDate = document.getElementById('deathLunarDate').value;
+        data.funeralLocation = document.getElementById('funeralLocation').value;
+        data.jiadianTimePhrase = document.getElementById('jiadianTimePhrase').value;
+        data.gongdianTimePhrase = document.getElementById('gongdianTimePhrase').value;
+        data.contactAddress = document.getElementById('contactAddress').value;
+        data.verticalAddress = document.getElementById('verticalAddress').value;
+        data.verticalAddressDetail = document.getElementById('verticalAddressDetail').value;
+        data.contactNameA = document.getElementById('contactNameA').value;
+        data.contactPhoneA = document.getElementById('contactPhoneA').value;
+        data.musician = document.getElementById('musician').value;
+        data.musicianPhone = document.getElementById('musicianPhone').value;
+        data.mapIframeLink = document.getElementById('mapIframeLink').value;
+        data.lineContactLink = document.getElementById('lineContactLink').value;
+        data.unifiedFlower = document.getElementById('unifiedFlower').value;
+        data.flowerStylesCodes = document.getElementById('flowerStylesCodes').value;
+        data.obituaryThanks = document.getElementById('obituaryThanks').value;
+        data.footerCompanyName = document.getElementById('footerCompanyName').value;
+
+        // 處理沒有檔案上傳的情況
+        if (filesToProcess.length === 0) {
+            // 使用預設路徑 (隱藏欄位值)
+            data.deceasedPhoto = document.getElementById('deceasedPhoto').value;
+            data.obituaryPaper = document.getElementById('obituaryPaper').value;
+            data.businessCardImg = document.getElementById('businessCardImg').value;
+            data.responsiblePersonImg = document.getElementById('responsiblePersonImg').value;
+            data.mapImg1 = document.getElementById('mapImg1').value;
+            data.mapImg2 = document.getElementById('mapImg2').value;
+            data.musicPath = ''; 
             
-            unifiedFlower: document.getElementById('unifiedFlower').value,
-            flowerStylesCodes: document.getElementById('flowerStylesCodes').value,
-            obituaryThanks: document.getElementById('obituaryThanks').value,
-            footerCompanyName: document.getElementById('footerCompanyName').value,
-            musicPath: document.getElementById('musicPath').value, // 音樂路徑
+            generateUrlAndDisplay(data);
+            return;
+        }
 
-            // --- 替換為 Base64 或原路徑 ---
-            deceasedPhoto: deceasedPhotoBase64 || document.getElementById('deceasedPhoto').value,
-            obituaryPaper: obituaryPaperBase64 || document.getElementById('obituaryPaper').value,
-            businessCardImg: businessCardImgBase64 || document.getElementById('businessCardImg').value,
-            responsiblePersonImg: responsiblePersonImgBase64 || document.getElementById('responsiblePersonImg').value,
-            mapImg1: mapImg1Base64 || document.getElementById('mapImg1').value,
-            mapImg2: mapImg2Base64 || document.getElementById('mapImg2').value,
-        };
+        // 處理檔案上傳
+        filesToProcess.forEach(fileId => {
+            const file = getFile(fileId);
+            const dataKey = fileId.replace('File', '').replace('Photo', ''); 
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                data[dataKey] = event.target.result; // Base64 字串
+                processedCount++;
+                
+                // 檢查所有檔案是否都已處理完成
+                if (processedCount === filesToProcess.length) {
+                    
+                    // 處理未上傳的圖片：使用預設路徑
+                    if (!data.deceased) data.deceasedPhoto = document.getElementById('deceasedPhoto').value;
+                    else data.deceasedPhoto = data.deceased;
 
-        // 儲存數據並導向展示頁
-        localStorage.setItem('fubenData', JSON.stringify(formData)); 
-        window.location.href = 'fuben_display.html'; 
+                    if (!data.obituaryPaper) data.obituaryPaper = document.getElementById('obituaryPaper').value;
+                    if (!data.businessCardImg) data.businessCardImg = document.getElementById('businessCardImg').value;
+                    if (!data.responsiblePersonImg) data.responsiblePersonImg = document.getElementById('responsiblePersonImg').value;
+                    if (!data.mapImg1) data.mapImg1 = document.getElementById('mapImg1').value;
+                    if (!data.mapImg2) data.mapImg2 = document.getElementById('mapImg2').value;
+                    
+                    if (!data.music) data.musicPath = ''; 
+                    else data.musicPath = data.music; // 將 music Base64 賦值給 musicPath
+
+                    // 刪除臨時的 key
+                    delete data.deceased;
+                    delete data.music;
+                    
+                    generateUrlAndDisplay(data);
+                }
+            };
+            reader.onerror = function(error) {
+                console.error(`讀取檔案 ${fileId} 失敗:`, error);
+                // 如果失敗，則使用預設路徑
+                const defaultKey = fileId.replace('File', '');
+                data[defaultKey] = document.getElementById(defaultKey).value;
+                
+                processedCount++;
+                if (processedCount === filesToProcess.length) {
+                    generateUrlAndDisplay(data);
+                }
+            };
+            
+            reader.readAsDataURL(file); 
+        });
     });
+
+    // ----------------------------------------------------
+    // 2. 核心邏輯：生成 URL
+    // ----------------------------------------------------
+    function generateUrlAndDisplay(data) {
+        try {
+            // 步驟 A: 將 JavaScript 物件轉換為 JSON 字串
+            const jsonStr = JSON.stringify(data);
+            
+            // 步驟 B: 使用 Base64 編碼，然後再進行 URL 編碼 (確保安全性)
+            const base64Str = btoa(jsonStr); // Base64 編碼
+            const urlEncodedData = encodeURIComponent(base64Str); // URL 編碼
+            
+            // 步驟 C: 構造最終的獨立網址
+            const baseUrl = window.location.href.replace('index.html', 'fuben_display.html');
+            const finalUrl = `${baseUrl}?data=${urlEncodedData}`;
+            
+            // 步驟 D: 顯示給使用者
+            const urlOutputDiv = document.getElementById('generated-url');
+            urlOutputDiv.textContent = finalUrl;
+            document.getElementById('result-box').style.display = 'block';
+            
+            // 綁定複製事件
+            urlOutputDiv.onclick = function() {
+                navigator.clipboard.writeText(finalUrl).then(() => {
+                    alert('訃聞網址已複製到剪貼簿！');
+                });
+            };
+
+            // 綁定複製並開啟按鈕
+            document.getElementById('copy-and-go-btn').onclick = function() {
+                 navigator.clipboard.writeText(finalUrl).then(() => {
+                    window.location.href = finalUrl; 
+                 });
+            };
+            
+        } catch (e) {
+            console.error("網址生成失敗，資料可能過長：", e);
+            alert("網址生成失敗，可能因 Base64 數據過長超出瀏覽器極限。請嘗試使用較小的圖片。");
+        }
+    }
     </script>
 </body>
 </html>
