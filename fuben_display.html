@@ -151,7 +151,6 @@
         @keyframes fadeInLightbox { to { opacity: 1; } }
         @media (max-width: 600px) { .transport-item { flex-basis: 100%; } }
 
-
         /* 參加喪禮區塊 */
         .funeral-attend { font-family: 'Iansui', 'Noto Serif TC', serif; max-width: 760px; margin: 40px auto; padding: 36px 24px; text-align: center; background-color: #ffffff; border: 2px solid #d9c3a3; border-radius: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.08); animation: fadeInUp 0.8s ease forwards; }
         .attend-header h2 { font-size: clamp(24px, 4vw, 30px); color: #3d2b1f; letter-spacing: 2px; margin: 0; font-weight: 700; }
@@ -462,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 // ====================================================
-// 核心數據載入與填充邏輯 (最終修正版，從 URL 參數讀取)
+// 核心數據載入與填充邏輯 (已修正亂碼問題)
 // ====================================================
 
 const FLOWER_PRICES = {
@@ -526,10 +525,40 @@ function generateFlowerGallery(codesStr) {
     });
 }
 
+/**
+ * 安全的 Base64 解碼 (支持 UTF-8 多字節字符)
+ * @param {string} base64String 
+ * @returns {string} 
+ */
+function decodeBase64Utf8(base64String) {
+    try {
+        // 1. 將 Base64 字串轉換成二進位字串 (傳統方式)
+        const binaryString = atob(base64String);
+        
+        // 2. 獲取二進位字串的長度
+        const len = binaryString.length;
+        
+        // 3. 建立一個無符號 8 位元整數陣列 (Uint8Array)
+        const bytes = new Uint8Array(len);
+        
+        // 4. 填充 Uint8Array
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // 5. 使用 TextDecoder 將 Uint8Array 以 UTF-8 編碼解碼為正確的字串
+        return new TextDecoder('utf-8').decode(bytes);
+        
+    } catch (e) {
+        console.error("Base64/UTF-8 解碼失敗", e);
+        return null;
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // --------------------------------------------------------------------------------
-    // 核心邏輯：從 URL 參數讀取數據
+    // 核心邏輯：從 URL 參數讀取數據 (修正亂碼問題的處理邏輯)
     // --------------------------------------------------------------------------------
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -542,15 +571,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // 步驟 A: URL 解碼
             const urlDecodedData = decodeURIComponent(encodedData);
             
-            // 步驟 B: Base64 解碼 (使用 atob)
-            const jsonStr = atob(urlDecodedData); 
+            // 步驟 B: Base64 解碼 (使用新的安全函數替換 atob)
+            const jsonStr = decodeBase64Utf8(urlDecodedData);
+            
+            if (!jsonStr) {
+                throw new Error("Base64 解碼後內容為空或解碼失敗。");
+            }
             
             // 步驟 C: JSON 解析
             data = JSON.parse(jsonStr);
             
         } catch (e) {
-            console.error("URL 數據解碼或解析失敗！請檢查網址是否完整。", e);
-            alert("訃聞數據載入失敗。網址連結可能已損壞或不完整。");
+            console.error("訃聞數據解碼或解析失敗！請檢查網址是否完整。", e);
+            alert("訃聞數據載入失敗，可能原因：網址連結已損壞或內容編碼錯誤。");
             return; 
         }
     } else {
@@ -561,7 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --------------------------------------------------------------------------------
-    // 成功讀取數據後，接下來的填充邏輯
+    // 成功讀取數據後，接下來的填充邏輯 (保持不變)
     // --------------------------------------------------------------------------------
     
     const funeralDateInfo = formatFuneralDate(data.funeralDate);
@@ -590,7 +623,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cleanNumber = (href || '').replace(/-/g, '').replace(/\s/g, '');
                 el.href = `tel:${cleanNumber}`;
             } else {
-                el.href = href || '#';
+                // 修正 Google Maps 連結的編碼
+                if (id === 'link-verticalAddressDetail' || id === 'link-contactAddress' || id === 'link-map-link-bottom') {
+                    const targetAddress = href || '';
+                    if (targetAddress) {
+                        el.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(targetAddress)}`;
+                    } else {
+                        el.href = '#';
+                    }
+                } else {
+                    el.href = href || '#';
+                }
+                
             }
         }
     };
@@ -603,11 +647,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (el && src) el.src = src; 
     };
 
-    // 從地址推導出 Google Map 連結 (修正連結格式)
+    // 從地址推導出 Google Map 連結 (使用地址字串本身)
     const mapLinkTargetAddress = data.contactAddress || data.funeralLocation;
-    const mapLinkBase = mapLinkTargetAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLinkTargetAddress)}` : '#';
 
-    // 處理音樂播放： (維持原邏輯)
+
+    // 處理音樂播放： 
     const audioEl = document.getElementById('background-music');
     const musicSourceMp3 = document.getElementById('music-source-mp3');
     const musicSourceOgg = document.getElementById('music-source-ogg');
@@ -665,7 +709,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-verticalAddress', data.verticalAddress);
     setContent('disp-verticalAddressDetail', data.verticalAddressDetail);
     
-    // 如果有 funeralLocation 就用地點名稱，否則用 N/A
+    // 統一地點名稱和地址
     setContent('disp-contactAddress-name', data.funeralLocation || 'N/A');
     setContent('disp-contactAddress', data.contactAddress);
 
@@ -691,8 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .join('');
     }
 
-    // **修正：交通資訊**
-    // 讓換行符號在 div 內正確顯示為換行
+    // 交通資訊 (修正：讓換行符號在 div 內正確顯示為換行)
     if (data.transportText) {
         document.getElementById('disp-transportText').innerHTML = data.transportText
             .split('\n')
@@ -731,16 +774,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 地圖與地點連結
     if(mapIframeSrc) document.getElementById('google-map-embed').src = mapIframeSrc;
-    // 修正：使用 mapLinkBase 作為 Google Map 導航連結
-    setLink('link-verticalAddressDetail', mapLinkBase, false);
-    setLink('link-contactAddress', mapLinkBase, false);
-    setLink('link-map-link-bottom', mapLinkBase, false);
+    // 使用 contactAddress 進行導航連結設置
+    setLink('link-verticalAddressDetail', data.verticalAddressDetail);
+    setLink('link-contactAddress', data.contactAddress);
+    setLink('link-map-link-bottom', data.contactAddress);
     
     // LINE 連結
-    setLink('link-lineContactLink-flower', lineLink, false);
-    setLink('link-fixed-lineContactLink', lineLink, false);
-    setLink('link-lineContactLink-attend', lineLink, false);
-    setLink('link-lineContactLink-footer', lineLink, false);
+    setLink('link-lineContactLink-flower', lineLink);
+    setLink('link-fixed-lineContactLink', lineLink);
+    setLink('link-lineContactLink-attend', lineLink);
+    setLink('link-lineContactLink-footer', lineLink);
     
     // 電話連結
     setLink('link-contactPhoneA-2', data.contactPhoneA, true); 
@@ -765,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ======================================
-    // C. 頁面動態效果 
+    // C. 頁面動態效果 (保持不變)
     // ======================================
     
     // Life-story 淡入效果
@@ -781,19 +824,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const paperImg = document.getElementById('paper-obituary');
     const zoomContainer = document.getElementById('zoom-container');
     const zoomImg = document.getElementById('zoom-img');
-    paperImg.addEventListener('click', () => {
-      zoomImg.src = paperImg.src;
-      zoomContainer.style.display = 'flex';
-      setTimeout(() => zoomContainer.classList.add('show'), 20);
-    });
-    zoomContainer.addEventListener('click', e => {
-      if (e.target === zoomContainer || e.target === zoomImg) {
-        zoomContainer.classList.remove('show');
-        setTimeout(() => zoomContainer.style.display = 'none', 400);
-      }
-    });
+    if (paperImg) {
+      paperImg.addEventListener('click', () => {
+        zoomImg.src = paperImg.src;
+        zoomContainer.style.display = 'flex';
+        setTimeout(() => zoomContainer.classList.add('show'), 20);
+      });
+    }
+    if (zoomContainer) {
+      zoomContainer.addEventListener('click', e => {
+        if (e.target === zoomContainer || e.target === zoomImg) {
+          zoomContainer.classList.remove('show');
+          setTimeout(() => zoomContainer.style.display = 'none', 400);
+        }
+      });
+    }
     document.addEventListener('keydown', e => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && zoomContainer && zoomContainer.classList.contains('show')) {
         zoomContainer.classList.remove('show');
         setTimeout(() => zoomContainer.style.display = 'none', 400);
       }
@@ -812,20 +859,26 @@ document.addEventListener('DOMContentLoaded', function() {
     if (thanksSection) thanksObserver.observe(thanksSection);
     
     // 花籃畫廊展開
-    document.getElementById('show-flower-baskets').addEventListener('click', function () {
-      const gallery = document.getElementById('flower-basket-gallery');
-      gallery.classList.toggle('show');
-      this.innerHTML = gallery.classList.contains('show') 
-        ? '<strong>隱藏花籃樣式 🌹</strong>' 
-        : '<strong>顯示花籃樣式 🌹</strong>';
-    });
-    // 放大花籃圖片
-    document.getElementById('image-overlay').addEventListener('click', function(e) {
-        if (e.target.id === 'image-overlay' || e.target.id === 'overlay-img') {
-            this.style.display = 'none';
-        }
-    });
+    const flowerBtn = document.getElementById('show-flower-baskets');
+    if (flowerBtn) {
+        flowerBtn.addEventListener('click', function () {
+            const gallery = document.getElementById('flower-basket-gallery');
+            gallery.classList.toggle('show');
+            this.innerHTML = gallery.classList.contains('show') 
+                ? '<strong>隱藏花籃樣式 🌹</strong>' 
+                : '<strong>顯示花籃樣式 🌹</strong>';
+        });
+    }
 
+    // 放大花籃圖片
+    const imageOverlay = document.getElementById('image-overlay');
+    if (imageOverlay) {
+        imageOverlay.addEventListener('click', function(e) {
+            if (e.target.id === 'image-overlay' || e.target.id === 'overlay-img') {
+                this.style.display = 'none';
+            }
+        });
+    }
 
     // 交通資訊圖片燈箱
     document.querySelectorAll(".image-gallery img").forEach(img => {
