@@ -2,14 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>訃聞數據輸入頁 (完整版)</title>
+    <title>訃聞數據輸入頁 (最終修正版)</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #333; }
         label { display: block; margin-top: 10px; font-weight: bold; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        /* 針對 File Input 進行調整，讓它看起來更整潔 */
+        /* 檔案上傳樣式 */
         input[type="file"] { width: 100%; padding: 10px 0; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f9f9f9; }
 
         button { display: block; width: 100%; padding: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer; font-size: 1.1em; }
@@ -21,7 +21,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>訃聞內容輸入 (豪華版)</h1>
+        <h1>訃聞內容輸入 (最終修正版)</h1>
         <form id="fubenForm">
             <div class="section">
                 <h2>亡者資訊</h2>
@@ -69,14 +69,14 @@
                         <input type="text" id="musicianPhone" value="0938-179-858" required>
                     </div>
                 </div>
-                <label for="mapIframeLink">Google Maps 嵌入連結 (iframe src，例如: https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.118742880757!2d121.4589281757802!3d25.031533939103527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a829281f696b%3A0x6a19f6a7384666f7!2z5paw5YyX5biC55uK5pyJ55qX6ICF!5e0!3m2!1szh-TW!2stw!4f13.1):</label>
-                <textarea id="mapIframeLink" rows="3" required>https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.118742880757!2d121.4589281757802!3d25.031533939103527!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a829281f696b%3A0x6a19f6a7384666f7!2z5paw5YyX5biC55uK5pyJ55qX6ICF!5e0!3m2!1szh-TW!2stw!4f13.1</textarea>
+                <label for="mapIframeLink">Google Maps 嵌入連結 (iframe src，例如: https://www.google.com/maps/embed?pb=!1m18!1m12!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a8b98f24458f%3A0x6a2c22e4d0c28340!2z6Ie65q-C56u55LiA6IK-5b-g!5e0!3m2!1szh-TW!2stw!4v1703031070213!5m2!1szh-TW!2stw):</label>
+                <textarea id="mapIframeLink" rows="3" required>https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.115456956247!2d121.4552458!3d25.0300185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a8b98f24458f%3A0x6a2c22e4d0c28340!2z6Ie65q-C56u55LiA6IK-5b-g!5e0!3m2!1szh-TW!2stw!4v1703031070213!5m2!1szh-TW!2stw</textarea>
                 <label for="lineContactLink">LINE 聯絡連結 (例如: https://line.me/ti/p/nZJmE8-b6X):</label>
                 <input type="text" id="lineContactLink" value="https://line.me/ti/p/nZJmE8-b6X" required>
             </div>
             
             <div class="section">
-                <h2>圖片與媒體上傳 (❗檔案上傳❗)</h2>
+                <h2>圖片與媒體上傳 (❗請點擊上傳檔案❗)</h2>
                 
                 <label for="deceasedPhotoFile">亡者追思照片 (上傳檔案):</label>
                 <input type="file" id="deceasedPhotoFile" accept="image/*">
@@ -102,8 +102,8 @@
                 <input type="file" id="mapImg2File" accept="image/*">
                 <input type="hidden" id="mapImg2" value="image/祥安資訊-板殯.png">
                 
-                <label for="musicPath">背景音樂路徑 (不含副檔名, ex: Misson Part 1):</label>
-                <input type="text" id="musicPath" value="Misson Part 1">
+                <label for="musicPath">背景音樂路徑 (不含副檔名, ex: image/Misson Part 1):</label>
+                <input type="text" id="musicPath" value="image/Misson Part 1">
             </div>
 
             <div class="section">
@@ -137,25 +137,14 @@
     // -----------------------------------------------------------
     function getBase64(file) {
         return new Promise((resolve, reject) => {
-            // 檢查是否有檔案，或檔案是否為 0 位元組（空檔案）
-            if (!file || file.size === 0) {
+            if (!file || file.size === 0 || !file.type.startsWith('image/')) {
                 resolve('');
                 return;
             }
-            // 檢查檔案類型是否為圖片，避免讀取非圖片檔案
-            if (!file.type.startsWith('image/')) {
-                console.warn(`檔案 ${file.name} 不是圖片類型，跳過 Base64 轉換。`);
-                resolve('');
-                return;
-            }
-
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
-            reader.onerror = error => {
-                 console.error("FileReader 錯誤:", error);
-                 reject(error);
-            }
+            reader.onerror = error => reject(error);
         });
     }
 
@@ -166,30 +155,12 @@
         e.preventDefault(); 
         
         // --- 處理圖片檔案上傳：await 等待所有檔案讀取完成 ---
-        // 亡者照片
-        const deceasedPhotoFile = document.getElementById('deceasedPhotoFile').files[0];
-        const deceasedPhotoBase64 = await getBase64(deceasedPhotoFile);
-        
-        // 訃聞紙本照片
-        const obituaryPaperFile = document.getElementById('obituaryPaperFile').files[0];
-        const obituaryPaperBase64 = await getBase64(obituaryPaperFile);
-        
-        // 禮儀公司名片
-        const businessCardImgFile = document.getElementById('businessCardImgFile').files[0];
-        const businessCardImgBase64 = await getBase64(businessCardImgFile);
-        
-        // 負責人/禮儀師照片
-        const responsiblePersonImgFile = document.getElementById('responsiblePersonImgFile').files[0];
-        const responsiblePersonImgBase64 = await getBase64(responsiblePersonImgFile);
-        
-        // 交通資訊圖 1
-        const mapImg1File = document.getElementById('mapImg1File').files[0];
-        const mapImg1Base64 = await getBase64(mapImg1File);
-        
-        // 交通資訊圖 2
-        const mapImg2File = document.getElementById('mapImg2File').files[0];
-        const mapImg2Base64 = await getBase64(mapImg2File);
-
+        const deceasedPhotoBase64 = await getBase64(document.getElementById('deceasedPhotoFile').files[0]);
+        const obituaryPaperBase64 = await getBase64(document.getElementById('obituaryPaperFile').files[0]);
+        const businessCardImgBase64 = await getBase64(document.getElementById('businessCardImgFile').files[0]);
+        const responsiblePersonImgBase64 = await getBase64(document.getElementById('responsiblePersonImgFile').files[0]);
+        const mapImg1Base64 = await getBase64(document.getElementById('mapImg1File').files[0]);
+        const mapImg2Base64 = await getBase64(document.getElementById('mapImg2File').files[0]);
         
         // --- 收集文字數據 ---
         const formData = {
@@ -215,10 +186,9 @@
             flowerStylesCodes: document.getElementById('flowerStylesCodes').value,
             obituaryThanks: document.getElementById('obituaryThanks').value,
             footerCompanyName: document.getElementById('footerCompanyName').value,
-            musicPath: document.getElementById('musicPath').value,
-            
+            musicPath: document.getElementById('musicPath').value, // 音樂路徑
+
             // --- 替換為 Base64 或原路徑 ---
-            // 如果 Base64 數據非空（代表有上傳新檔案），則使用 Base64；否則使用隱藏欄位中的預設路徑。
             deceasedPhoto: deceasedPhotoBase64 || document.getElementById('deceasedPhoto').value,
             obituaryPaper: obituaryPaperBase64 || document.getElementById('obituaryPaper').value,
             businessCardImg: businessCardImgBase64 || document.getElementById('businessCardImg').value,
