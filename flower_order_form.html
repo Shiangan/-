@@ -68,7 +68,7 @@
             border: 2px solid #eee;
             border-radius: 8px;
             padding: 15px;
-            width: 45%; /* 確保一行顯示兩個 */
+            width: 45%; 
             text-align: center;
             transition: all 0.3s;
             cursor: pointer;
@@ -87,30 +87,75 @@
             margin-bottom: 10px;
         }
         .flower-card input[type="radio"] {
-            margin-right: 8px;
+            display: none; 
         }
         .flower-card label {
             display: inline;
             font-weight: normal;
         }
         
-        /* Submit Button */
-        button[type="submit"] {
-            display: block;
-            width: 100%;
+        /* Dynamic Sections */
+        .dynamic-section {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px dashed #ddd;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+        .dynamic-section.hidden {
+            display: none;
+        }
+
+        /* Price Bar */
+        #priceBar {
+            background-color: #fff8e1;
+            border: 2px solid #ffcc80;
             padding: 15px;
-            background-color: #5cb85c;
-            color: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            color: #e65100;
+        }
+        #priceBar span {
+            color: #d32f2f;
+            font-size: 1.2em;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-buttons button, .action-buttons a {
+            flex-grow: 1;
+            padding: 15px;
             border: none;
             border-radius: 6px;
-            margin-top: 30px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1.1em;
+            text-align: center;
+            text-decoration: none;
             transition: background-color 0.3s;
         }
-        button[type="submit"]:hover {
+        #submitFormBtn {
+            background-color: #5cb85c;
+            color: white;
+        }
+        #submitFormBtn:hover {
             background-color: #449d44;
         }
+        #lineOrderBtn {
+            background-color: #00c300;
+            color: white;
+        }
+        #lineOrderBtn:hover {
+            background-color: #009900;
+        }
+        
+        /* Info Bar */
         .info-bar {
             background-color: #f0f8ff;
             border: 1px solid #cce5ff;
@@ -121,154 +166,413 @@
             text-align: center;
             font-weight: bold;
         }
+
+        /* Modal/Payment Window */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 10000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%; text-align: left; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-content h3 { color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px; margin-top: 0; }
+        .payment-info { background: #fcf8e3; border: 1px solid #faebcc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+        .payment-info p { margin: 5px 0; line-height: 1.6; }
+        .payment-info strong { color: #555; }
+        .close-btn { float: right; font-size: 24px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>花籃訂購與輓聯登記</h1>
         <div class="info-bar">
-            弔唁故 <span id="deceasedNameDisplay"></span> <span id="deceasedGenderTitleDisplay"></span> (會場：<span id="funeralLocationDisplay"></span>)
+            弔唁故 <span id="deceasedNameDisplay">...</span> <span id="deceasedGenderTitleDisplay">...</span> (會場：<span id="funeralLocationDisplay">...</span>)
         </div>
 
         <form id="flowerOrderForm">
             
-            <h2>👤 弔唁者/訂購人資訊</h2>
-            <label for="orderName">訂購人姓名 (輓聯署名):</label>
+            <h2>👤 訂購人與落款資訊</h2>
+            
+            <label for="orderName">訂購人聯繫姓名:</label>
             <input type="text" id="orderName" required>
 
             <label for="orderContact">連絡電話:</label>
             <input type="tel" id="orderContact" required>
             
-            <label for="orderEmail">Email (選填，用於接收確認信):</label>
+            <label for="orderEmail">Email (選填):</label>
             <input type="email" id="orderEmail">
 
-            <label for="relationship">與亡者關係 (例如: 朋友、公司):</label>
-            <input type="text" id="relationship" required>
+            <label for="coupletSign">輓聯落款名單/公司行號 (必填，將顯示於花籃):</label>
+            <input type="text" id="coupletSign" placeholder="例如：姻親 陳OO、祥安生命有限公司 負責人 陳柏元" required>
+
+            <label for="relationship">與亡者關係:</label>
+            <input type="text" id="relationship" placeholder="例如: 朋友、公司、姻親" required>
+            
 
             <h2>💐 花籃選擇</h2>
             <p id="flowerInstruction">請選擇您希望訂購的花籃樣式:</p>
             <div class="flower-options" id="flowerOptionsContainer">
                 </div>
 
-            <h2>📝 輓聯內容 (選填)</h2>
+            <div id="priceBar">
+                選購樣式：<span id="selectedStyleDisplay">請選擇</span><br>
+                總金額：<span id="totalPriceDisplay">NT$0</span>
+            </div>
+            
+            <h2>🧾 收據與備註</h2>
+
+            <label for="needReceipt">是否需要開立收據?</label>
+            <select id="needReceipt" required>
+                <option value="否">否</option>
+                <option value="是">是</option>
+            </select>
+            
+            <div id="receiptDetails" class="dynamic-section hidden">
+                <label for="receiptName">收據收件人 (公司/個人):</label>
+                <input type="text" id="receiptName" placeholder="請填寫收件人姓名或公司名稱">
+                
+                <label for="receiptAddress">收據收件人地址:</label>
+                <input type="text" id="receiptAddress" placeholder="請填寫完整地址">
+
+                <label for="receiptPhone">收據收件人電話:</label>
+                <input type="tel" id="receiptPhone" placeholder="請填寫電話">
+            </div>
+
             <label for="couplet">輓聯上款 (弔唁詞，例如: 典範長存):</label>
             <input type="text" id="couplet" placeholder="留空則使用公版">
             
             <label for="note">備註/特殊需求 (選填):</label>
-            <textarea id="note" rows="3" placeholder="例如: 希望送達時間、收據需求..."></textarea>
+            <textarea id="note" rows="3" placeholder="例如: 希望送達時間、其他客製化需求..."></textarea>
 
-            <button type="submit">確認訂購與登記</button>
+            <div class="action-buttons">
+                 <button type="button" id="lineOrderBtn">💬 一鍵 LINE 聯繫訂購</button>
+                 <button type="submit" id="submitFormBtn">✅ 線上填單並登記</button>
+            </div>
         </form>
     </div>
 
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>🔔 訂單已登記，請完成付款</h3>
+            <p>感謝您的訂購，您已成功登記花籃與輓聯資訊。</p>
+            <p>您需支付的金額為：<strong style="color: red;" id="modalTotalPrice">NT$0</strong> (樣式：<span id="modalSelectedStyle"></span>)</p>
+
+            <p style="font-weight: bold; margin-top: 20px;">請選擇以下任一方式完成付款：</p>
+            
+            <div class="payment-info">
+                <h4>轉帳匯款</h4>
+                <p>銀行名稱：<strong>XX 銀行 (銀行代碼：807)</strong></p>
+                <p>帳號：<strong>1234-567-890123</strong></p>
+                <p>戶名：**祥安生命有限公司**</p>
+                <p style="color: red; font-weight: bold;">⚠️ 匯款後請點擊下方按鈕提供帳號後五碼以利核對。</p>
+            </div>
+
+            <div class="payment-info">
+                <h4>Line Pay 轉帳</h4>
+                <p>請加入我們的 Line 聯繫客服，並透過 Line Pay 轉帳付款。</p>
+                <p>Line ID：**@xiangantw**</p>
+            </div>
+            
+            <a id="linePaymentLink" href="#" target="_blank" style="display: block; text-align: center; margin-top: 15px; padding: 10px; background-color: #00c300; color: white; border-radius: 5px; text-decoration: none;">
+                📞 點我 Line 聯繫並提供後五碼
+            </a>
+            
+            <p style="margin-top: 20px; font-size: 0.9em;">**重要：** 若未在 **24 小時內**提供付款證明，訂單將可能被取消。</p>
+        </div>
+    </div>
+
+
     <script>
+        // 價格設定 (與訃聞頁保持一致)
+        const FLOWER_PRICES = {
+            'A': { price: 2500, display: 'NT$2,500/對' }, 'B': { price: 3000, display: 'NT$3,000/對' }, 
+            'C': { price: 3500, display: 'NT$3,500/對' }, 'D': { price: 4500, display: 'NT$4,500/對' },
+            'E': { price: 5000, display: 'NT$5,000/對' }, 'F': { price: 5500, display: 'NT$5,500/對' }, 
+            'G': { price: 6000, display: 'NT$6,000/對' }, 'H': { price: 6500, display: 'NT$6,500/對' }
+        };
+
+        let currentSelectedStyle = null; // 用於追蹤當前選中的樣式代碼
+        const webAppUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'; // 🚨 替換成您的 Google Apps Script URL
+        
+        // 輔助函數：將 JSON 數據轉換為 LINE 訊息格式
+        function formatOrderToLineMessage(orderData) {
+            const receiptDetail = orderData.needReceipt === '是' 
+                ? `\n\n【收據資訊】\n收件人: ${orderData.receiptName}\n地址: ${orderData.receiptAddress}\n電話: ${orderData.receiptPhone}`
+                : ` (無需收據)`;
+
+            const message = `
+【花籃訂購單 - 待付款】
+弔唁故: ${orderData.deceasedName} 
+出殯地點: ${orderData.funeralLocation}
+總金額: NT$${orderData.totalPrice}
+
+============================
+【訂購人資訊】
+聯繫人: ${orderData.orderName}
+電話: ${orderData.orderContact}
+關係: ${orderData.relationship}
+落款名單: ${orderData.coupletSign}
+
+【花籃與輓聯】
+樣式代碼: ${orderData.selectedStyle} (NT$${orderData.totalPrice})
+輓聯上款: ${orderData.couplet}
+備註: ${orderData.note || '無'}
+============================
+【付款與收據】
+需開收據: ${orderData.needReceipt}${receiptDetail}
+
+👉 我將以【匯款/Line Pay】方式付款，請提供後五碼或付款截圖。
+`;
+            return encodeURIComponent(message.trim());
+        }
+
+        // 監聽函數：更新價格顯示
+        function updatePriceDisplay(styleCode) {
+            const priceData = FLOWER_PRICES[styleCode];
+            const display = priceData ? priceData.display : '價格請洽禮儀師';
+            const price = priceData ? priceData.price : 0;
+            
+            document.getElementById('selectedStyleDisplay').textContent = styleCode;
+            document.getElementById('totalPriceDisplay').textContent = `NT$${price.toLocaleString()}`;
+            
+            currentSelectedStyle = styleCode; // 更新當前選中樣式
+            return price;
+        }
+
+        // 監聽函數：控制收據細節的顯示/隱藏
+        function handleReceiptChange() {
+            const needReceipt = document.getElementById('needReceipt').value;
+            const detailsSection = document.getElementById('receiptDetails');
+            
+            if (needReceipt === '是') {
+                detailsSection.classList.remove('hidden');
+                document.getElementById('receiptName').required = true;
+                document.getElementById('receiptAddress').required = true;
+                document.getElementById('receiptPhone').required = true;
+            } else {
+                detailsSection.classList.add('hidden');
+                document.getElementById('receiptName').required = false;
+                document.getElementById('receiptAddress').required = false;
+                document.getElementById('receiptPhone').required = false;
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const dataString = localStorage.getItem('fubenData');
             if (!dataString) {
-                alert('訃聞數據遺失，無法載入訂購資訊。請返回輸入頁。');
+                alert('訃聞數據遺失，無法載入訂購資訊。請返回訃聞頁面。');
+                window.location.href = 'fuben_display.html'; 
                 return;
             }
             const data = JSON.parse(dataString);
+
+            // 設置 Line 聯繫連結
+            const lineLink = data.lineContactLink || 'https://line.me/ti/p/@yourlineid';
+            document.getElementById('linePaymentLink').href = lineLink;
             
             // 數據綁定到頂部資訊欄
-            document.getElementById('deceasedNameDisplay').textContent = data.name;
+            document.getElementById('deceasedNameDisplay').textContent = data.name || 'N/A';
             document.getElementById('deceasedGenderTitleDisplay').textContent = data.gender === '女' ? '女士' : '先生';
-            document.getElementById('funeralLocationDisplay').textContent = data.funeralLocation;
+            document.getElementById('funeralLocationDisplay').textContent = data.funeralLocation || 'N/A';
+            
+            // 初始化收據細節監聽
+            document.getElementById('needReceipt').addEventListener('change', handleReceiptChange);
+            handleReceiptChange(); // 首次載入執行一次
 
             // 處理花籃選項的動態生成
             const container = document.getElementById('flowerOptionsContainer');
             const instruction = document.getElementById('flowerInstruction');
             
-            if (data.unifiedFlower === '是' && data.flowerStyles) {
-                // 統一製作模式：只顯示勾選的樣式
-                instruction.innerHTML = '本次喪禮採 **統一製作** 花籃，僅提供以下樣式 (<span style="color: red;">'+ data.flowerStyles +'</span>) 選擇。';
-                
-                const availableStyles = data.flowerStyles.split(', ').filter(s => s.trim() !== '');
-                
-                if (availableStyles.length > 0) {
-                    availableStyles.forEach((style, index) => {
-                        const styleCode = style.trim();
-                        const card = document.createElement('div');
-                        card.className = 'flower-card';
-                        card.innerHTML = `
-                            <img src="image/flower_style_${styleCode.toLowerCase()}.jpg" alt="花籃樣式 ${styleCode}" onerror="this.onerror=null;this.src='image/default_flower.jpg';">
-                            <input type="radio" id="style${styleCode}" name="flowerStyle" value="${styleCode}" ${index === 0 ? 'checked' : ''}>
-                            <label for="style${styleCode}">樣式 ${styleCode}</label>
-                        `;
-                        container.appendChild(card);
-                        
-                        // 點擊卡片時選擇 radio button
-                        card.addEventListener('click', function() {
-                            document.getElementById(`style${styleCode}`).checked = true;
-                            // 移除其他卡片的 selected class
-                            document.querySelectorAll('.flower-card').forEach(c => c.classList.remove('selected'));
-                            // 為當前卡片添加 selected class
-                            card.classList.add('selected');
-                        });
-                        // 預設選中第一個
-                        if (index === 0) {
-                            card.classList.add('selected');
-                        }
-                    });
+            const availableStyles = (data.flowerStylesCodes || '').split(',').map(s => s.trim().toUpperCase()).filter(s => s);
+            
+            if (availableStyles.length === 0) {
+                 instruction.innerHTML = '<span style="color: red;">本次喪禮未設定可選花籃樣式，請在備註欄說明樣式，或使用「一鍵 LINE 聯繫訂購」。</span>';
+                 document.getElementById('submitFormBtn').disabled = true;
+            } else {
+                // ... (動態生成花籃卡片邏輯)
+                if (data.unifiedFlower === '是') {
+                    instruction.innerHTML = '本次喪禮採 **統一製作** 花籃，僅提供以下樣式選擇。';
                 } else {
-                    instruction.textContent = '本次喪禮雖為統一製作，但未設定可選花籃樣式，請直接填寫輓聯資訊。';
+                    instruction.innerHTML = '本次喪禮採 **開放自訂** 花籃。以下為建議樣式。';
                 }
 
-            } else {
-                // 開放自訂模式：顯示更多預設樣式供選擇
-                instruction.innerHTML = '本次喪禮採 **開放自訂** 花籃。以下為建議樣式，您亦可於備註填寫特殊需求。';
-                
-                // 假設開放模式提供 A, B, C, D 四種預設樣式
-                ['A', 'B', 'C', 'D'].forEach((style, index) => {
+                availableStyles.forEach((styleCode, index) => {
+                    const price = FLOWER_PRICES[styleCode]?.display || '價格不明';
                     const card = document.createElement('div');
                     card.className = 'flower-card';
                     card.innerHTML = `
-                        <img src="image/flower_style_${style.toLowerCase()}.jpg" alt="花籃樣式 ${style}" onerror="this.onerror=null;this.src='image/default_flower.jpg';">
-                        <input type="radio" id="style${style}" name="flowerStyle" value="${style}" ${index === 0 ? 'checked' : ''}>
-                        <label for="style${style}">樣式 ${style}</label>
+                        <img src="image/花籃${styleCode}款.JPG" alt="花籃樣式 ${styleCode}" onerror="this.onerror=null;this.src='image/default_flower.jpg';">
+                        <input type="radio" id="style${styleCode}" name="flowerStyle" value="${styleCode}" ${index === 0 ? 'checked' : ''}>
+                        <label for="style${styleCode}">樣式 ${styleCode} (${price})</label>
                     `;
                     container.appendChild(card);
                     
                     card.addEventListener('click', function() {
-                        document.getElementById(`style${style}`).checked = true;
+                        document.getElementById(`style${styleCode}`).checked = true;
                         document.querySelectorAll('.flower-card').forEach(c => c.classList.remove('selected'));
                         card.classList.add('selected');
+                        updatePriceDisplay(styleCode);
                     });
-                     if (index === 0) {
+                    
+                    if (index === 0) {
                         card.classList.add('selected');
+                        updatePriceDisplay(styleCode);
                     }
                 });
             }
 
 
-            // 表單提交處理 (模擬訂購)
-            document.getElementById('flowerOrderForm').addEventListener('submit', function(e) {
+            // --------------------------------------------------------------------------------
+            // A. 一鍵 LINE 聯繫訂購 (產生訊息草稿)
+            // --------------------------------------------------------------------------------
+            document.getElementById('lineOrderBtn').addEventListener('click', function(e) {
+                // 獲取所有表單數據 (無需驗證，因為這是客戶主動聯繫)
+                const orderData = {
+                    orderName: document.getElementById('orderName').value || '未填寫',
+                    orderContact: document.getElementById('orderContact').value || '未填寫',
+                    relationship: document.getElementById('relationship').value || '未填寫',
+                    coupletSign: document.getElementById('coupletSign').value || '未填寫',
+                    selectedStyle: currentSelectedStyle || '未選樣式',
+                    couplet: document.getElementById('couplet').value || '使用公版',
+                    note: document.getElementById('note').value || '無',
+                    needReceipt: document.getElementById('needReceipt').value,
+                    receiptName: document.getElementById('receiptName').value || 'N/A',
+                    receiptAddress: document.getElementById('receiptAddress').value || 'N/A',
+                    receiptPhone: document.getElementById('receiptPhone').value || 'N/A',
+                    totalPrice: FLOWER_PRICES[currentSelectedStyle]?.price || 0,
+                    deceasedName: data.name,
+                    funeralLocation: data.funeralLocation,
+                };
+                
+                const lineMsg = formatOrderToLineMessage(orderData);
+                
+                // 檢查是否為手機環境
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const url = isMobile 
+                    ? `https://line.me/R/msg/text/?${lineMsg}` 
+                    : `https://line.me/ti/p/${lineLink.split('@').pop()}?text=${lineMsg}`;
+                
+                window.open(url, '_blank');
+            });
+
+
+            // --------------------------------------------------------------------------------
+            // B. 線上填單並登記 (發送到 Apps Script)
+            // --------------------------------------------------------------------------------
+            document.getElementById('flowerOrderForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
+                const totalPrice = FLOWER_PRICES[currentSelectedStyle]?.price;
+
+                // 最終檢查
+                if (!currentSelectedStyle) {
+                    alert('請選擇您希望訂購的花籃樣式！');
+                    return;
+                }
+                if (totalPrice === 0) {
+                     alert('無法取得金額，請使用「一鍵 LINE 聯繫訂購」或聯繫禮儀師確認。');
+                    return;
+                }
+                
+                // 獲取所有表單數據
                 const orderData = {
                     orderName: document.getElementById('orderName').value,
                     orderContact: document.getElementById('orderContact').value,
                     orderEmail: document.getElementById('orderEmail').value,
+                    coupletSign: document.getElementById('coupletSign').value,
                     relationship: document.getElementById('relationship').value,
-                    selectedStyle: document.querySelector('input[name="flowerStyle"]:checked')?.value || '未選擇',
                     couplet: document.getElementById('couplet').value || '使用公版',
                     note: document.getElementById('note').value,
-                    // 帶入訃聞關鍵資訊
+                    
+                    // 新增欄位
+                    needReceipt: document.getElementById('needReceipt').value,
+                    receiptName: document.getElementById('receiptName').value || 'N/A',
+                    receiptAddress: document.getElementById('receiptAddress').value || 'N/A',
+                    receiptPhone: document.getElementById('receiptPhone').value || 'N/A',
+                    
+                    // 關鍵訂單資訊
+                    selectedStyle: currentSelectedStyle,
+                    totalPrice: totalPrice, // 存儲數字金額
                     deceasedName: data.name,
                     funeralLocation: data.funeralLocation,
                     funeralDate: data.funeralDate,
                 };
 
-                // 在實際應用中，這裡會是 AJAX 請求將數據發送到伺服器 (例如 Google Sheet, 資料庫, 或 Email 服務)
-                console.log('--- 模擬訂購數據發送 ---');
-                console.log(orderData);
-                console.log('---------------------------');
+                // 檢查是否已設定 Apps Script URL
+                if (webAppUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                    console.warn('請設定 Google Apps Script URL！目前為模擬提交。');
+                    alert(`✅ (模擬) 感謝 ${orderData.orderName}，您的訂單已登記在瀏覽器控制台。\n請設置 Apps Script URL 以實現正式提交。`);
+                    console.log('--- 模擬訂購數據 ---', orderData);
+                    
+                    // 跳轉到付款引導 (即便模擬也提供引導)
+                    showPaymentModal(orderData); 
+                    return; 
+                }
 
-                alert(`✅ 感謝 ${orderData.orderName}，花籃訂購與輓聯登記成功！\n您選擇的樣式是: ${orderData.selectedStyle}\n您的訂單已轉交禮儀師處理。`);
-                
-                // 成功後可以跳轉回訃聞頁面或顯示確認訊息
-                window.location.href = 'fuben_display.html';
+                try {
+                    const submitButton = document.getElementById('submitFormBtn');
+                    submitButton.disabled = true;
+                    submitButton.textContent = '提交中...';
+
+                    const response = await fetch(webAppUrl, {
+                        method: 'POST',
+                        mode: 'cors', 
+                        cache: 'no-cache',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orderData),
+                    });
+
+                    const result = await response.json(); 
+
+                    if (result.status === 'success') {
+                        // 成功寫入 Google Sheet 後，引導客戶付款
+                        showPaymentModal(orderData);
+                    } else {
+                        throw new Error(result.message || '伺服器返回失敗狀態。');
+                    }
+
+                } catch (error) {
+                    console.error('訂單發送失敗:', error);
+                    alert(`❌ 訂購失敗，請截圖本頁面並直接聯繫禮儀師。\n錯誤訊息: ${error.message}`);
+                    
+                    // 恢復按鈕狀態
+                    document.getElementById('submitFormBtn').disabled = false;
+                    document.getElementById('submitFormBtn').textContent = '✅ 線上填單並登記';
+                }
             });
+
+            // --------------------------------------------------------------------------------
+            // C. 付款彈窗邏輯
+            // --------------------------------------------------------------------------------
+            const modal = document.getElementById('paymentModal');
+            const closeBtn = document.querySelector('.close-btn');
+
+            closeBtn.addEventListener('click', () => modal.style.display = 'none');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+
+            function showPaymentModal(orderData) {
+                document.getElementById('modalTotalPrice').textContent = `NT$${orderData.totalPrice.toLocaleString()}`;
+                document.getElementById('modalSelectedStyle').textContent = `${orderData.selectedStyle}`;
+
+                // 更新 LINE 連結，在聯繫時自動帶入訂單資訊
+                const lineLinkWithMsg = data.lineContactLink || 'https://line.me/ti/p/@yourlineid';
+                const paymentMessage = `您好，我已提交【${orderData.deceasedName}】花籃訂單，金額 NT$${orderData.totalPrice.toLocaleString()}，請協助核對。我的後五碼是：[請填寫後五碼] / Line Pay 已轉帳 [請填寫轉帳時間]。`;
+                const lineMsg = encodeURIComponent(paymentMessage);
+                
+                document.getElementById('linePaymentLink').href = `https://line.me/R/msg/text/?${lineMsg}`;
+                
+                modal.style.display = 'flex';
+                
+                // 清除本地數據，防止下次誤讀
+                localStorage.removeItem('fubenData');
+                
+                // 恢復按鈕狀態 (讓使用者可以重新嘗試，但通常應該導向回首頁)
+                document.getElementById('submitFormBtn').disabled = false;
+                document.getElementById('submitFormBtn').textContent = '✅ 線上填單並登記';
+
+            }
         });
     </script>
 </body>
