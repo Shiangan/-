@@ -456,9 +456,8 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 </footer>
 
-<script>
 // ====================================================
-// 核心數據載入與填充邏輯
+// 核心數據載入與填充邏輯 (修正版)
 // ====================================================
 
 const FLOWER_PRICES = {
@@ -470,7 +469,6 @@ const FLOWER_PRICES = {
  * 格式化日期並獲取星期幾
  */
 function formatFuneralDate(dateStr) {
-    // 確保輸入是 YYYY-MM-DD 格式
     if (!dateStr || dateStr.length !== 10) return { year: 'N/A', month: 'N/A', day: 'N/A', dayname: 'N/A', full: 'N/A' };
     
     // 使用 new Date(dateStr + 'T00:00:00') 避免時區問題
@@ -499,7 +497,6 @@ function formatFuneralDate(dateStr) {
 function generateFlowerGallery(codesStr) {
     const gallery = document.getElementById('flower-basket-gallery');
     gallery.innerHTML = '';
-    // 將輸入的樣式代碼字串轉換為陣列
     const codes = codesStr.split(',').map(c => c.trim().toUpperCase()).filter(c => c);
 
     codes.forEach(code => {
@@ -536,15 +533,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const lineLink = data.lineContactLink || '#';
     const mapIframeSrc = data.mapIframeLink || '';
     
-    // 嘗試從地址推導出 Google Map 連結，用於開啟新視窗
-    // 使用 contactAddress 作為地圖連結的目的地
+    // 從地址推導出 Google Map 連結，用於開啟新視窗
     const mapLinkTarget = data.contactAddress || data.funeralLocation;
-    const mapLinkBase = `https://www.google.com/maps/place/${encodeURIComponent(mapLinkTarget)}`;
+    // 修正：地圖連結應使用 encodeURIComponent 來確保地址中的中文能正確開啟地圖
+    const mapLinkBase = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLinkTarget)}`;
 
+    /**
+     * 核心填充函式 (修正：允許空字串作為內容)
+     */
     const setContent = (id, content) => {
         const el = document.getElementById(id);
-        // 如果內容為空或 N/A，則不替換，否則替換 [亡者姓名]
-        if (el && content) el.textContent = content.replace(/\[亡者姓名\]/g, data.name);
+        // 修正判斷：只檢查是否為 undefined 或 null，允許空字串 ""
+        if (el && content !== undefined && content !== null) {
+            // 使用 toString() 避免非字串類型報錯，並替換亡者姓名
+            el.textContent = content.toString().replace(/\[亡者姓名\]/g, data.name);
+        }
     };
     
     // 設置電話連結
@@ -552,19 +555,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const el = document.getElementById(id);
         if (el) {
             if (telPrefix) {
-                const cleanNumber = href.replace(/-/g, '').replace(/\s/g, '');
+                const cleanNumber = (href || '').replace(/-/g, '').replace(/\s/g, '');
                 el.href = `tel:${cleanNumber}`;
-                // 如果是電話連結本身，也更新顯示文字
-                if(el.tagName === 'A' && el.textContent.trim() === 'N/A') el.textContent = href;
             } else {
-                el.href = href;
+                el.href = href || '#';
             }
         }
     };
     
+    // 設置圖片路徑
     const setImgSrc = (id, src) => {
         const el = document.getElementById(id);
-        if (el && src) el.src = src;
+        // 修正判斷：必須確保 src 不為空字串，否則會破圖
+        if (el && src) el.src = src; 
     };
     
     // ======================================
@@ -574,7 +577,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 媒體與圖片
     setImgSrc('music-source-mp3', data.musicPath ? `${data.musicPath}.mp3` : '');
     setImgSrc('music-source-ogg', data.musicPath ? `${data.musicPath}.ogg` : '');
-    document.getElementById('background-music').load();
+    // 必須在設置 src 之後 load() 才能生效
+    document.getElementById('background-music').load(); 
     setImgSrc('main-photo', data.deceasedPhoto);
     setImgSrc('paper-obituary', data.obituaryPaper);
     setImgSrc('disp-businessCardImg', data.businessCardImg);
@@ -598,7 +602,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-funeralLocation-detail', data.funeralLocation);
     setContent('disp-verticalAddress', data.verticalAddress);
     setContent('disp-verticalAddressDetail', data.verticalAddressDetail);
-    setContent('disp-contactAddress-name', data.funeralLocation.split(' ')[0]);
+    
+    // 這裡修正，如果 funeralLocation 是空的，則顯示 N/A
+    setContent('disp-contactAddress-name', data.funeralLocation ? data.funeralLocation.split(' ')[0] : 'N/A');
     setContent('disp-contactAddress', data.contactAddress);
 
     // 追思與緬懷區
@@ -611,6 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-jiadianTimePhrase-2', data.jiadianTimePhrase);
     setContent('disp-gongdianTimePhrase-2', data.gongdianTimePhrase);
     setContent('disp-contactNameA-2', data.contactNameA);
+    setContent('link-contactPhoneA-2', data.contactPhoneA); // 顯示電話號碼
     setLink('link-contactPhoneA-2', data.contactPhoneA, true);
 
     // 感謝親友自訂文字 (處理換行)
@@ -618,13 +625,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('disp-obituaryThanks').innerHTML = data.obituaryThanks
             .split('\n')
             .map(p => p.trim())
-            .filter(p => p) // 移除空行
+            .filter(p => p)
             .map(p => `<p><strong>${p.replace(/\[亡者姓名\]/g, data.name)}</strong></p>`)
             .join('');
     }
 
     // 交通資訊
-    setContent('disp-funeralLocation-3', data.funeralLocation.split(' ')[0]);
+    setContent('disp-funeralLocation-3', data.funeralLocation ? data.funeralLocation.split(' ')[0] : 'N/A');
     setContent('disp-contactAddress-3', data.contactAddress);
 
     // 參加喪禮區
@@ -669,7 +676,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (data.unifiedFlower === '是') {
         setContent('flower-policy-text', '為維持會場整齊，本次喪禮採統一製作花籃，請勿自行訂購。');
         setContent('disp-flower-policy-attend', '為維持會場整齊，統一製作花籃。');
-        // 統一製作時隱藏「顯示花籃樣式」按鈕
         document.getElementById('show-flower-baskets').style.display = 'none'; 
     } else {
         setContent('flower-policy-text', '若需致贈花籃，請於下方選擇樣式後，點選 LINE 與我們聯繫。');
@@ -677,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('show-flower-baskets').style.display = 'inline-block';
     }
     
-    // 動態生成花籃畫廊 (即使政策統一，如果 codesStr 有值，仍然生成以供後續操作)
+    // 動態生成花籃畫廊 
     generateFlowerGallery(data.flowerStylesCodes || '');
 
 
@@ -775,8 +781,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let url = new URL(window.location.href);
     url.searchParams.delete("fbclid");
     url.searchParams.delete("utm_source");
-    // 如果是 Punycode 則轉換回來顯示
-    if(url.hostname.includes("xn--")) url.hostname="24hour.台灣"; 
+    
+    // 這裡只是視覺上的修正，實際的分享連結仍使用瀏覽器當前 URL
     let encodedUrl = encodeURIComponent(url.toString());
     const fbShare = document.querySelector(".fb-share-btn");
     const lineShare = document.querySelector(".line-share-btn");
@@ -831,5 +837,5 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 });
 </script>
-</body>
-</html>
+            </body>
+  </html>
