@@ -9,6 +9,9 @@
         h1 { text-align: center; color: #333; }
         label { display: block; margin-top: 10px; font-weight: bold; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        /* 針對 File Input 進行調整，讓它看起來更整潔 */
+        input[type="file"] { width: 100%; padding: 10px 0; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f9f9f9; }
+
         button { display: block; width: 100%; padding: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer; font-size: 1.1em; }
         button:hover { background-color: #0056b3; }
         .section { border: 1px solid #ddd; padding: 15px; margin-top: 20px; border-radius: 6px; }
@@ -73,21 +76,34 @@
             </div>
             
             <div class="section">
-                <h2>圖片與媒體路徑</h2>
-                <label for="deceasedPhoto">亡者追思照片路徑 (ex: image/IMG_3696.jpeg):</label>
-                <input type="text" id="deceasedPhoto" value="image/IMG_3696.jpeg">
-                <label for="obituaryPaper">訃聞紙本照片路徑 (ex: image/IMG_4092.jpeg):</label>
-                <input type="text" id="obituaryPaper" value="image/IMG_4092.jpeg">
-                <label for="businessCardImg">禮儀公司名片路徑 (ex: image/未命名設計.png):</label>
-                <input type="text" id="businessCardImg" value="image/未命名設計.png">
-                <label for="responsiblePersonImg">負責人/禮儀師照片路徑 (ex: image/IMG_8349.jpeg):</label>
-                <input type="text" id="responsiblePersonImg" value="image/IMG_8349.jpeg">
+                <h2>圖片與媒體上傳 (❗檔案上傳❗)</h2>
+                
+                <label for="deceasedPhotoFile">亡者追思照片 (上傳檔案):</label>
+                <input type="file" id="deceasedPhotoFile" accept="image/*">
+                <input type="hidden" id="deceasedPhoto" value="image/IMG_3696.jpeg">
+
+                <label for="obituaryPaperFile">訃聞紙本照片 (上傳檔案):</label>
+                <input type="file" id="obituaryPaperFile" accept="image/*">
+                <input type="hidden" id="obituaryPaper" value="image/IMG_4092.jpeg">
+
+                <label for="businessCardImgFile">禮儀公司名片 (上傳檔案):</label>
+                <input type="file" id="businessCardImgFile" accept="image/*">
+                <input type="hidden" id="businessCardImg" value="image/未命名設計.png">
+
+                <label for="responsiblePersonImgFile">負責人/禮儀師照片 (上傳檔案):</label>
+                <input type="file" id="responsiblePersonImgFile" accept="image/*">
+                <input type="hidden" id="responsiblePersonImg" value="image/IMG_8349.jpeg">
+
+                <label for="mapImg1File">交通資訊圖 1 (上傳檔案):</label>
+                <input type="file" id="mapImg1File" accept="image/*">
+                <input type="hidden" id="mapImg1" value="image/IMG_6325.png">
+
+                <label for="mapImg2File">交通資訊圖 2 (上傳檔案):</label>
+                <input type="file" id="mapImg2File" accept="image/*">
+                <input type="hidden" id="mapImg2" value="image/祥安資訊-板殯.png">
+                
                 <label for="musicPath">背景音樂路徑 (不含副檔名, ex: Misson Part 1):</label>
                 <input type="text" id="musicPath" value="Misson Part 1">
-                <label for="mapImg1">交通資訊圖 1 (ex: image/IMG_6325.png):</label>
-                <input type="text" id="mapImg1" value="image/IMG_6325.png">
-                <label for="mapImg2">交通資訊圖 2 (ex: image/祥安資訊-板殯.png):</label>
-                <input type="text" id="mapImg2" value="image/祥安資訊-板殯.png">
             </div>
 
             <div class="section">
@@ -95,7 +111,7 @@
                 <label for="unifiedFlower">是否採統一製作花籃?</label>
                 <select id="unifiedFlower" required>
                     <option value="是">是 (統一製作，不接受外部花禮)</option>
-                    <option value="否">否 (開放選擇樣式)</option>
+                    <option value="否" selected>否 (開放選擇樣式)</option>
                 </select>
                 <label>可供選擇的花籃樣式代碼 (例如: A,B,C,D,E,F,G,H, 用逗號分隔):</label>
                 <input type="text" id="flowerStylesCodes" value="A,B,C,D,E,F,G,H">
@@ -116,42 +132,105 @@
     </div>
 
     <script>
-        document.getElementById('fubenForm').addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            const formData = {
-                name: document.getElementById('name').value,
-                age: document.getElementById('age').value,
-                deathDate: document.getElementById('deathDate').value,
-                funeralDate: document.getElementById('funeralDate').value,
-                deathLunarDate: document.getElementById('deathLunarDate').value,
-                funeralLocation: document.getElementById('funeralLocation').value,
-                jiadianTimePhrase: document.getElementById('jiadianTimePhrase').value,
-                gongdianTimePhrase: document.getElementById('gongdianTimePhrase').value,
-                contactAddress: document.getElementById('contactAddress').value,
-                verticalAddress: document.getElementById('verticalAddress').value,
-                verticalAddressDetail: document.getElementById('verticalAddressDetail').value,
-                contactNameA: document.getElementById('contactNameA').value,
-                contactPhoneA: document.getElementById('contactPhoneA').value,
-                musician: document.getElementById('musician').value,
-                musicianPhone: document.getElementById('musicianPhone').value,
-                mapIframeLink: document.getElementById('mapIframeLink').value,
-                lineContactLink: document.getElementById('lineContactLink').value,
-                deceasedPhoto: document.getElementById('deceasedPhoto').value,
-                obituaryPaper: document.getElementById('obituaryPaper').value,
-                businessCardImg: document.getElementById('businessCardImg').value,
-                responsiblePersonImg: document.getElementById('responsiblePersonImg').value,
-                musicPath: document.getElementById('musicPath').value,
-                mapImg1: document.getElementById('mapImg1').value,
-                mapImg2: document.getElementById('mapImg2').value,
-                unifiedFlower: document.getElementById('unifiedFlower').value,
-                flowerStylesCodes: document.getElementById('flowerStylesCodes').value,
-                obituaryThanks: document.getElementById('obituaryThanks').value,
-                footerCompanyName: document.getElementById('footerCompanyName').value,
-            };
+    // -----------------------------------------------------------
+    // 核心轉換函式：將檔案轉換為 Base64 字串
+    // -----------------------------------------------------------
+    function getBase64(file) {
+        return new Promise((resolve, reject) => {
+            // 檢查是否有檔案，或檔案是否為 0 位元組（空檔案）
+            if (!file || file.size === 0) {
+                resolve('');
+                return;
+            }
+            // 檢查檔案類型是否為圖片，避免讀取非圖片檔案
+            if (!file.type.startsWith('image/')) {
+                console.warn(`檔案 ${file.name} 不是圖片類型，跳過 Base64 轉換。`);
+                resolve('');
+                return;
+            }
 
-            localStorage.setItem('fubenData', JSON.stringify(formData)); 
-            window.location.href = 'fuben_display.html'; 
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => {
+                 console.error("FileReader 錯誤:", error);
+                 reject(error);
+            }
         });
+    }
+
+    // -----------------------------------------------------------
+    // 表單提交處理
+    // -----------------------------------------------------------
+    document.getElementById('fubenForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); 
+        
+        // --- 處理圖片檔案上傳：await 等待所有檔案讀取完成 ---
+        // 亡者照片
+        const deceasedPhotoFile = document.getElementById('deceasedPhotoFile').files[0];
+        const deceasedPhotoBase64 = await getBase64(deceasedPhotoFile);
+        
+        // 訃聞紙本照片
+        const obituaryPaperFile = document.getElementById('obituaryPaperFile').files[0];
+        const obituaryPaperBase64 = await getBase64(obituaryPaperFile);
+        
+        // 禮儀公司名片
+        const businessCardImgFile = document.getElementById('businessCardImgFile').files[0];
+        const businessCardImgBase64 = await getBase64(businessCardImgFile);
+        
+        // 負責人/禮儀師照片
+        const responsiblePersonImgFile = document.getElementById('responsiblePersonImgFile').files[0];
+        const responsiblePersonImgBase64 = await getBase64(responsiblePersonImgFile);
+        
+        // 交通資訊圖 1
+        const mapImg1File = document.getElementById('mapImg1File').files[0];
+        const mapImg1Base64 = await getBase64(mapImg1File);
+        
+        // 交通資訊圖 2
+        const mapImg2File = document.getElementById('mapImg2File').files[0];
+        const mapImg2Base64 = await getBase64(mapImg2File);
+
+        
+        // --- 收集文字數據 ---
+        const formData = {
+            name: document.getElementById('name').value,
+            age: document.getElementById('age').value,
+            deathDate: document.getElementById('deathDate').value,
+            funeralDate: document.getElementById('funeralDate').value,
+            deathLunarDate: document.getElementById('deathLunarDate').value,
+            funeralLocation: document.getElementById('funeralLocation').value,
+            jiadianTimePhrase: document.getElementById('jiadianTimePhrase').value,
+            gongdianTimePhrase: document.getElementById('gongdianTimePhrase').value,
+            contactAddress: document.getElementById('contactAddress').value,
+            verticalAddress: document.getElementById('verticalAddress').value,
+            verticalAddressDetail: document.getElementById('verticalAddressDetail').value,
+            contactNameA: document.getElementById('contactNameA').value,
+            contactPhoneA: document.getElementById('contactPhoneA').value,
+            musician: document.getElementById('musician').value,
+            musicianPhone: document.getElementById('musicianPhone').value,
+            mapIframeLink: document.getElementById('mapIframeLink').value,
+            lineContactLink: document.getElementById('lineContactLink').value,
+            
+            unifiedFlower: document.getElementById('unifiedFlower').value,
+            flowerStylesCodes: document.getElementById('flowerStylesCodes').value,
+            obituaryThanks: document.getElementById('obituaryThanks').value,
+            footerCompanyName: document.getElementById('footerCompanyName').value,
+            musicPath: document.getElementById('musicPath').value,
+            
+            // --- 替換為 Base64 或原路徑 ---
+            // 如果 Base64 數據非空（代表有上傳新檔案），則使用 Base64；否則使用隱藏欄位中的預設路徑。
+            deceasedPhoto: deceasedPhotoBase64 || document.getElementById('deceasedPhoto').value,
+            obituaryPaper: obituaryPaperBase64 || document.getElementById('obituaryPaper').value,
+            businessCardImg: businessCardImgBase64 || document.getElementById('businessCardImg').value,
+            responsiblePersonImg: responsiblePersonImgBase64 || document.getElementById('responsiblePersonImg').value,
+            mapImg1: mapImg1Base64 || document.getElementById('mapImg1').value,
+            mapImg2: mapImg2Base64 || document.getElementById('mapImg2').value,
+        };
+
+        // 儲存數據並導向展示頁
+        localStorage.setItem('fubenData', JSON.stringify(formData)); 
+        window.location.href = 'fuben_display.html'; 
+    });
     </script>
 </body>
 </html>
