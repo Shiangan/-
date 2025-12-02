@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </main>
 
 <style>
+/* 保持所有 CSS 樣式不變 */
 @font-face {
   font-family: 'Iansui';
   src: url('Iansui-Regular.ttf') format('truetype');
@@ -314,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
     <div class="remembrance-item">
       <h3><strong>聯繫電話</strong></h3>
-      <p><strong><span id="disp-contactNameA-2">N/A</span> 📞 <a id="link-contactPhoneA-2" href="tel:">N/A</a></strong></p>
+      <p><strong><span id="disp-contactNameA-2">N/A</span> 📞 <a id="link-contactPhoneA-2" href="tel:"><span id="disp-contactPhoneA-2">N/A</span></a></strong></p>
     </div>
   </div>
         <div class="map-wrapper" aria-hidden="false" role="region" aria-label="地圖：治喪地點">
@@ -456,10 +457,9 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 </footer>
 
-</section>
 <script>
 // ====================================================
-// 核心數據載入與填充邏輯 (修正版)
+// 核心數據載入與填充邏輯 (最終修正版)
 // ====================================================
 
 const FLOWER_PRICES = {
@@ -499,12 +499,14 @@ function formatFuneralDate(dateStr) {
 function generateFlowerGallery(codesStr) {
     const gallery = document.getElementById('flower-basket-gallery');
     gallery.innerHTML = '';
+    // 將輸入的樣式代碼字串轉換為陣列
     const codes = codesStr.split(',').map(c => c.trim().toUpperCase()).filter(c => c);
 
     codes.forEach(code => {
         const price = FLOWER_PRICES[code] || `價格不明`;
         const div = document.createElement('div');
         div.classList.add('zoomable');
+        // 假設花籃圖片路徑是 image/花籃X款.JPG，如果副檔名不同請自行修正
         div.innerHTML = `
             <img src="image/花籃${code}款.JPG" alt="花籃${code}" loading="lazy">
             <p class="price"><strong>${code}款 ${price}</strong></p>
@@ -526,6 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const dataStr = localStorage.getItem('fubenData');
     if (!dataStr) {
       console.error("未找到本地儲存的訃聞數據！");
+      // 可以考慮在此處重導回 index.html 或顯示錯誤訊息
       return; 
     }
 
@@ -535,28 +538,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const lineLink = data.lineContactLink || '#';
     const mapIframeSrc = data.mapIframeLink || '';
     
-    // 從地址推導出 Google Map 連結，用於開啟新視窗
-    const mapLinkTarget = data.contactAddress || data.funeralLocation;
-    // 修正：地圖連結應使用 encodeURIComponent 來確保地址中的中文能正確開啟地圖
-    const mapLinkBase = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLinkTarget)}`;
-
     /**
-     * 核心填充函式 (修正：允許空字串作為內容)
+     * 核心填充函式：允許空字串通過，但不允許 undefined 或 null。
      */
     const setContent = (id, content) => {
         const el = document.getElementById(id);
-        // 修正判斷：只檢查是否為 undefined 或 null，允許空字串 ""
-        if (el && content !== undefined && content !== null) {
-            // 使用 toString() 避免非字串類型報錯，並替換亡者姓名
+        // 修正判斷：必須允許空字串 "" 通過
+        if (el && content !== undefined && content !== null) { 
             el.textContent = content.toString().replace(/\[亡者姓名\]/g, data.name);
         }
     };
     
-    // 設置電話連結
+    /**
+     * 設置連結。
+     */
     const setLink = (id, href, telPrefix = false) => {
         const el = document.getElementById(id);
         if (el) {
             if (telPrefix) {
+                // 清理電話號碼中的符號，並加上 tel:
                 const cleanNumber = (href || '').replace(/-/g, '').replace(/\s/g, '');
                 el.href = `tel:${cleanNumber}`;
             } else {
@@ -565,13 +565,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // 設置圖片路徑
+    /**
+     * 設置圖片路徑或 Base64 數據。
+     */
     const setImgSrc = (id, src) => {
         const el = document.getElementById(id);
-        // 修正判斷：必須確保 src 不為空字串，否則會破圖
+        // 確保 src 不為空字串或 null/undefined
         if (el && src) el.src = src; 
     };
     
+    // 從地址推導出 Google Map 連結
+    // 使用 contactAddress 作為地圖連結的目的地
+    const mapLinkTargetAddress = data.contactAddress || data.funeralLocation;
+    const mapLinkBase = mapLinkTargetAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLinkTargetAddress)}` : '#';
+
     // ======================================
     // A. 數據填充
     // ======================================
@@ -579,8 +586,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 媒體與圖片
     setImgSrc('music-source-mp3', data.musicPath ? `${data.musicPath}.mp3` : '');
     setImgSrc('music-source-ogg', data.musicPath ? `${data.musicPath}.ogg` : '');
-    // 必須在設置 src 之後 load() 才能生效
     document.getElementById('background-music').load(); 
+    
+    // 圖片（現在能顯示 Base64 數據或舊路徑）
     setImgSrc('main-photo', data.deceasedPhoto);
     setImgSrc('paper-obituary', data.obituaryPaper);
     setImgSrc('disp-businessCardImg', data.businessCardImg);
@@ -605,24 +613,22 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-verticalAddress', data.verticalAddress);
     setContent('disp-verticalAddressDetail', data.verticalAddressDetail);
     
-    // 這裡修正，如果 funeralLocation 是空的，則顯示 N/A
     setContent('disp-contactAddress-name', data.funeralLocation ? data.funeralLocation.split(' ')[0] : 'N/A');
     setContent('disp-contactAddress', data.contactAddress);
 
     // 追思與緬懷區
     setContent('disp-verticalAddress-2', data.verticalAddress);
-    setContent('disp-verticalAddressDetail-2', data.verticalAddressDetail);
+    setContent('disp-verticalAddressDetail-2', data.verticalAddressDetail); // 修正：填充地址文字
     setContent('disp-funeralLocation-2', data.funeralLocation);
-    setContent('disp-contactAddress-2', data.contactAddress);
+    setContent('disp-contactAddress-2', data.contactAddress); // 修正：填充地址文字
     setContent('disp-funeralDate-full', funeralDateInfo.full);
     setContent('disp-funeralDate-dayname-2', funeralDateInfo.dayname);
     setContent('disp-jiadianTimePhrase-2', data.jiadianTimePhrase);
     setContent('disp-gongdianTimePhrase-2', data.gongdianTimePhrase);
     setContent('disp-contactNameA-2', data.contactNameA);
-    setContent('link-contactPhoneA-2', data.contactPhoneA); // 顯示電話號碼
-    setLink('link-contactPhoneA-2', data.contactPhoneA, true);
+    setContent('disp-contactPhoneA-2', data.contactPhoneA); // 修正：填充電話顯示文字
 
-    // 感謝親友自訂文字 (處理換行)
+    // 感謝親友自訂文字
     if(data.obituaryThanks) {
         document.getElementById('disp-obituaryThanks').innerHTML = data.obituaryThanks
             .split('\n')
@@ -642,8 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setContent('disp-deathLunarDate-2', data.deathLunarDate);
     setContent('disp-funeralLocation-4', data.funeralLocation);
     setContent('disp-musician-2', data.musician);
-    setContent('disp-musicianPhone-2', data.musicianPhone);
-    setLink('link-musicianPhone-attend', data.musicianPhone, true);
+    setContent('disp-musicianPhone-2', data.musicianPhone); // 修正：填充禮儀師電話顯示文字
 
     // 頁腳
     setContent('disp-footerCompanyName-1', data.footerCompanyName);
@@ -661,6 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 地圖與地點連結
     if(mapIframeSrc) document.getElementById('google-map-embed').src = mapIframeSrc;
+    // 使用 Map Link Base 設置所有地圖超連結
     setLink('link-verticalAddressDetail', mapLinkBase);
     setLink('link-contactAddress', mapLinkBase);
     setLink('link-map-link-bottom', mapLinkBase);
@@ -671,8 +677,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setLink('link-lineContactLink-attend', lineLink);
     setLink('link-lineContactLink-footer', lineLink);
     
-    // 電話連結 (24H 專線)
-    setLink('link-fixed-musicianPhone', data.musicianPhone, true);
+    // 電話連結
+    setLink('link-contactPhoneA-2', data.contactPhoneA, true); // 家屬聯絡人電話
+    setLink('link-fixed-musicianPhone', data.musicianPhone, true); // 24H 專線
+    setLink('link-musicianPhone-attend', data.musicianPhone, true); // 參加喪禮區電話
 
     // 花籃政策
     if (data.unifiedFlower === '是') {
@@ -783,13 +791,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let url = new URL(window.location.href);
     url.searchParams.delete("fbclid");
     url.searchParams.delete("utm_source");
-    
-    // 這裡只是視覺上的修正，實際的分享連結仍使用瀏覽器當前 URL
     let encodedUrl = encodeURIComponent(url.toString());
     const fbShare = document.querySelector(".fb-share-btn");
     const lineShare = document.querySelector(".line-share-btn");
     if(fbShare) fbShare.href="https://www.facebook.com/sharer/sharer.php?u="+encodedUrl;
-    // LINE 分享使用不同的格式
     if(lineShare) lineShare.href="https://line.me/R/msg/text/?【"+data.name+" 訃告】誠摯邀請您參與畢業典禮%0D%0A"+encodedUrl;
     
     // 頁腳文字自適應 JS (保持原樣)
@@ -839,5 +844,5 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 });
 </script>
-            </body>
-  </html>
+</body>
+</html>
