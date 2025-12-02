@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <section id="donate-flower">
   <h3><strong>致贈花籃，送上祝福</strong></h3>
   <p><strong id="flower-policy-text">N/A</strong></p>
-  <a id="link-lineContactLink-flower" href="#" target="_blank" class="btn-order"><strong>加入 LINE 訂購</strong></a>
+  <a id="link-lineContactLink-flower" href="#" class="btn-order"><strong>線上訂購 / LINE 登記</strong></a>
   <a href="javascript:void(0);" id="show-flower-baskets" class="btn"><strong>顯示花籃樣式 🌹</strong></a>
 </section>
 
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 // ====================================================
-// 核心數據載入與填充邏輯 (已修正亂碼問題)
+// 核心數據載入與填充邏輯
 // ====================================================
 
 const FLOWER_PRICES = {
@@ -501,21 +501,18 @@ function formatFuneralDate(dateStr) {
 function generateFlowerGallery(codesStr) {
     const gallery = document.getElementById('flower-basket-gallery');
     gallery.innerHTML = '';
-    // 將輸入的樣式代碼字串轉換為陣列
     const codes = codesStr.split(',').map(c => c.trim().toUpperCase()).filter(c => c);
 
     codes.forEach(code => {
         const price = FLOWER_PRICES[code] || `價格不明`;
         const div = document.createElement('div');
         div.classList.add('zoomable');
-        // 假設花籃圖片路徑是 image/花籃X款.JPG，如果副檔名不同請自行修正
         div.innerHTML = `
             <img src="image/花籃${code}款.JPG" alt="花籃${code}" loading="lazy">
             <p class="price"><strong>${code}款 ${price}</strong></p>
         `;
         gallery.appendChild(div);
         
-        // 綁定燈箱事件
         div.querySelector('img').addEventListener('click', function() {
             const overlay = document.getElementById('image-overlay');
             const overlayImg = document.getElementById('overlay-img');
@@ -527,28 +524,16 @@ function generateFlowerGallery(codesStr) {
 
 /**
  * 安全的 Base64 解碼 (支持 UTF-8 多字節字符)
- * @param {string} base64String 
- * @returns {string} 
  */
 function decodeBase64Utf8(base64String) {
     try {
-        // 1. 將 Base64 字串轉換成二進位字串 (傳統方式)
         const binaryString = atob(base64String);
-        
-        // 2. 獲取二進位字串的長度
         const len = binaryString.length;
-        
-        // 3. 建立一個無符號 8 位元整數陣列 (Uint8Array)
         const bytes = new Uint8Array(len);
-        
-        // 4. 填充 Uint8Array
         for (let i = 0; i < len; i++) {
             bytes[i] = binaryString.charCodeAt(i);
         }
-        
-        // 5. 使用 TextDecoder 將 Uint8Array 以 UTF-8 編碼解碼為正確的字串
         return new TextDecoder('utf-8').decode(bytes);
-        
     } catch (e) {
         console.error("Base64/UTF-8 解碼失敗", e);
         return null;
@@ -568,17 +553,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (encodedData) {
         try {
-            // 步驟 A: URL 解碼
             const urlDecodedData = decodeURIComponent(encodedData);
-            
-            // 步驟 B: Base64 解碼 (使用新的安全函數替換 atob)
             const jsonStr = decodeBase64Utf8(urlDecodedData);
             
             if (!jsonStr) {
                 throw new Error("Base64 解碼後內容為空或解碼失敗。");
             }
             
-            // 步驟 C: JSON 解析
             data = JSON.parse(jsonStr);
             
         } catch (e) {
@@ -587,14 +568,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return; 
         }
     } else {
-        // 如果 URL 中沒有 'data' 參數，則停止執行
         console.error("URL 中未找到訃聞數據！");
         alert("無法載入訃聞數據，請聯繫管理員獲取正確網址。");
         return; 
     }
 
     // --------------------------------------------------------------------------------
-    // 成功讀取數據後，接下來的填充邏輯 (保持不變)
+    // 成功讀取數據後，接下來的填充邏輯
     // --------------------------------------------------------------------------------
     
     const funeralDateInfo = formatFuneralDate(data.funeralDate);
@@ -619,15 +599,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const el = document.getElementById(id);
         if (el) {
             if (telPrefix) {
-                // 清理電話號碼中的符號，並加上 tel:
                 const cleanNumber = (href || '').replace(/-/g, '').replace(/\s/g, '');
                 el.href = `tel:${cleanNumber}`;
             } else {
-                // 修正 Google Maps 連結的編碼
                 if (id === 'link-verticalAddressDetail' || id === 'link-contactAddress' || id === 'link-map-link-bottom') {
                     const targetAddress = href || '';
                     if (targetAddress) {
-                        el.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(targetAddress)}`;
+                        el.href = `http://google.com/maps/search/?api=1&query=${encodeURIComponent(targetAddress)}`;
                     } else {
                         el.href = '#';
                     }
@@ -769,18 +747,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ======================================
-    // B. 連結與政策
+    // B. 連結與政策 (核心修正區)
     // ======================================
     
     // 地圖與地點連結
     if(mapIframeSrc) document.getElementById('google-map-embed').src = mapIframeSrc;
-    // 使用 contactAddress 進行導航連結設置
     setLink('link-verticalAddressDetail', data.verticalAddressDetail);
     setLink('link-contactAddress', data.contactAddress);
     setLink('link-map-link-bottom', data.contactAddress);
     
-    // LINE 連結
-    setLink('link-lineContactLink-flower', lineLink);
+    // LINE 連結 (只保留不涉及訂單的連結設定)
     setLink('link-fixed-lineContactLink', lineLink);
     setLink('link-lineContactLink-attend', lineLink);
     setLink('link-lineContactLink-footer', lineLink);
@@ -790,25 +766,49 @@ document.addEventListener('DOMContentLoaded', function() {
     setLink('link-fixed-musicianPhone', data.musicianPhone, true); 
     setLink('link-musicianPhone-attend', data.musicianPhone, true); 
 
-    // 花籃政策
+    // --------------------------------------------------------------------------------
+    // 🚨 【核心修正區】 花籃政策與訂購按鈕邏輯
+    // --------------------------------------------------------------------------------
+    const orderBtn = document.getElementById('link-lineContactLink-flower');
+    const showFlowerBtn = document.getElementById('show-flower-baskets');
+
+    // 1. 設定花籃政策文字
     if (data.unifiedFlower === '是') {
         setContent('flower-policy-text', '為維持會場整齊，本次喪禮採統一製作花籃，請勿自行訂購。');
         setContent('disp-flower-policy-attend', '為維持會場整齊，統一製作花籃。');
-        const flowerBtn = document.getElementById('show-flower-baskets');
-        if(flowerBtn) flowerBtn.style.display = 'none'; 
+        if(showFlowerBtn) showFlowerBtn.style.display = 'none'; // 隱藏顯示花籃樣式按鈕
     } else {
-        setContent('flower-policy-text', '若需致贈花籃，請於下方選擇樣式後，點選 LINE 與我們聯繫。');
+        setContent('flower-policy-text', '若需致贈花籃，請於下方選擇樣式後，點選按鈕進入訂購頁面。');
         setContent('disp-flower-policy-attend', '開放花籃致贈，請參閱頁面下方花籃樣式。');
-        const flowerBtn = document.getElementById('show-flower-baskets');
-        if(flowerBtn) flowerBtn.style.display = 'inline-block';
+        if(showFlowerBtn) showFlowerBtn.style.display = 'inline-block';
     }
+    
+    // 2. 處理「線上訂購 / LINE 登記」按鈕的點擊事件
+    if (orderBtn) {
+        orderBtn.href = 'javascript:void(0);'; 
+        orderBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 將完整的訃聞數據存入瀏覽器的本地儲存
+            try {
+                localStorage.setItem('fubenData', JSON.stringify(data)); 
+                
+                // 跳轉到訂購頁面
+                window.location.href = 'flower_order_form.html'; 
+            } catch (error) {
+                console.error("無法儲存數據到 localStorage 並跳轉：", error);
+                alert("數據儲存失敗，請直接聯繫禮儀師。");
+            }
+        });
+    }
+    // --------------------------------------------------------------------------------
     
     // 動態生成花籃畫廊 
     generateFlowerGallery(data.flowerStylesCodes || '');
 
 
     // ======================================
-    // C. 頁面動態效果 (保持不變)
+    // C. 頁面動態效果
     // ======================================
     
     // Life-story 淡入效果
