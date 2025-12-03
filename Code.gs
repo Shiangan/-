@@ -1,5 +1,5 @@
 const SHEET_NAME = "工作表1"; // 🚨 請確認您的 Google Sheet 工作表名稱
-const RECIPIENT_EMAIL = "avarubby85110@gmil.com"; // 🚨 請替換為接收訂單通知的 Email
+const RECIPIENT_EMAIL = "ava85110@yahoo.com.tw"; // 🚨 請替換為接收訂單通知的 Email
 
 /**
  * 處理從網頁 POST 過來的數據
